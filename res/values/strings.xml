@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Hisab</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Date</string>
+    <string name="button_show">Show</string>
+    <string name="action_search">Search</string>
+    <string name="title_activity_display">Display</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="title_activity_config">Configuration</string>
+    <string name="config_selectdate">Select Date</string>
+    <string name="config_stdate">Start Date</string>
+    <string name="config_endate">End Date</string>
+     <string name="date_title">Configure Date</string>
+     <string name="Rp">&#x20B9;%.2f</string>
+     <string-array
+        name="string_array">
+        <item>Today</item>
+        <item>Select Date</item>
+    </string-array>
+
+</resources>
