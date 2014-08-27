@@ -25,6 +25,7 @@ public class GetData {
 	private float city=0;
 	private float iciciDB=0;
 	private float sbi=0;
+	private float amex=0;
 	public static int count=0;
 	public int cn=0;
 	private List<Float> amt;
@@ -88,6 +89,14 @@ public class GetData {
 			cl.add(Color.LTGRAY);
 			count++;
 		}
+		if(amex>0)
+		{
+			amt.add(amex);
+			cardName.add("Amex");
+			percent.add(amex/total);
+			cl.add(Color.CYAN);
+			count++;
+		}
 		return count;
 	}
 
@@ -132,6 +141,10 @@ public class GetData {
 				else if(tmp1.contains("SBI Debit Card") || tmp1.contains("Debited INR") || tmp1.contains("You have made a Debit Card purchase"))
 				{
 					sbiDebit(tmp1);
+				}
+				else if(tmp1.contains("American Express Card"))
+				{
+					Amex(tmp1);
 				}
 			}
 		}
@@ -236,6 +249,16 @@ public class GetData {
 			tmp2=tmp2.replaceAll(",", "");
 			sbi=Float.valueOf((tmp2))+sbi;
 		}
+	}
+	public void Amex(String tmp1)
+	{
+		String tmp2="";
+		String[] separated = tmp1.split("INR");
+		tmp2=separated[1];
+		String[] separated1 = tmp2.split("has");
+		tmp2=separated1[0];
+		tmp2=tmp2.replaceAll(",", "");
+		amex=Float.valueOf((tmp2))+amex;
 	}
 	public List<Float> getCardAmt()
 	{
