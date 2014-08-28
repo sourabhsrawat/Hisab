@@ -2,30 +2,25 @@ package com.rawat.hisab;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.util.Log;
 
 public class GetData {
 
 	private Cursor cur;
-	private int i =1;
-	private String sms = "";
 	private ConfigDate CfgDate;
 	private ContentResolver cR;
 	private float icicBank=0;
 	private float hdfcCredit=0;
-	private float hdfcSmt=0;
 	private float city=0;
 	private float iciciDB=0;
 	private float sbi=0;
 	private float amex=0;
+	private float hdfcDebit=0;
 	public static int count=0;
 	public int cn=0;
 	private List<Float> amt;
@@ -51,59 +46,52 @@ public class GetData {
 		count=0;
 		if(icicBank > 0)
 		{
-			amt.add(icicBank);
-			cardName.add("ICICI CREDIT");
-			percent.add(icicBank/total);
-			cl.add(Color.RED);
+			setParm(icicBank,"ICICI CREDIT",Color.RED);
 			count++;
 		}
 		if(hdfcCredit > 0 )
 		{
-			amt.add(hdfcCredit+hdfcSmt);
-			cardName.add("HDFC");
-			percent.add(hdfcCredit/total);
-			cl.add(Color.BLUE);
+			setParm(hdfcCredit,"HDFC",Color.BLUE);
 			count++;
 		}
 		if(city>0)
 		{
-			amt.add(city);
-			cardName.add("CITI");
-			percent.add(city/total);
-			cl.add(Color.GREEN);
+			setParm(city,"CITI",Color.GREEN);
 			count++;
 		}
 		if(iciciDB>0)
 		{
-			amt.add(iciciDB);
-			cardName.add("ICICI Debit");
-			percent.add(iciciDB/total);
-			cl.add(Color.YELLOW);
+			setParm(iciciDB,"ICICI Debit",Color.BLACK);
 			count++;
 		}
 		if(sbi>0)
 		{
-			amt.add(sbi);
-			cardName.add("SBI Debit");
-			percent.add(sbi/total);
-			cl.add(Color.LTGRAY);
+			setParm(sbi,"SBI Debit",Color.LTGRAY);
 			count++;
 		}
 		if(amex>0)
 		{
-			amt.add(amex);
-			cardName.add("Amex");
-			percent.add(amex/total);
-			cl.add(Color.CYAN);
+			setParm(amex,"Amex",Color.CYAN);
 			count++;
 		}
+		if(hdfcDebit>0)
+		{
+			setParm(hdfcDebit,"HDFC Debit",Color.MAGENTA);
+			count++;
+		}
+		
 		return count;
+	}
+	private void setParm(float cardAmt, String cName, int col)
+	{
+		amt.add(cardAmt);
+		cardName.add(cName);
+		percent.add(cardAmt/total);
+		cl.add(col);
 	}
 
 	public float getTotal()
 	{
-		
-		String str ="content://sms/";
 		int mnt = CfgDate.getEndMonth();
 		int year = CfgDate.getEndYear();
 		Uri uriSMSURI = Uri.parse("content://sms/");
@@ -111,47 +99,56 @@ public class GetData {
 		Calendar cl = Calendar.getInstance();
 		while (cur.moveToNext()) {
 			long ms= Long.parseLong(cur.getString(4));
-			Date dateFromSms = new Date(ms);
+
 			cl.setTimeInMillis(ms);
 
 			if(cl.get(Calendar.MONTH)+1==mnt && cl.get(Calendar.YEAR) == year )
 			{
-				String tmp1="";
-				tmp1=cur.getString(12);
-				if(tmp1.contains("Tranx of INR"))
+				String msg="";
+				msg=cur.getString(12);
+				//Log.w("msg", msg);
+				if(msg.contains("Tranx of INR"))
 				{
-					iciciCredit(tmp1);
+					iciciCredit(msg);	
 				}	
-				else if(tmp1.contains("HDFCBank CREDIT Card"))
+				else if(msg.contains("HDFCBank CREDIT Card"))
 				{
-					hdfcBankCredit(tmp1);
+					hdfcBankCredit(msg);
 				}
-				else if(tmp1.contains("HDFC Bank credit card to pay your SMARTPAY"))
+				else if(msg.contains("HDFC Bank credit card to pay your SMARTPAY"))
 				{
-					hdfcBankSmt(tmp1);
+					hdfcBankSmt(msg);
 				}
-				else if(tmp1.contains("Citibank ATM"))
+				else if(msg.contains("Citibank ATM"))
 				{
-					cityAtm(tmp1);
+					cityAtm(msg);
 				}
-				else if(tmp1.contains("Dear Customer, Your Ac") && tmp1.contains("debited"))
+				else if(msg.contains("Dear Customer, Your Ac") && msg.contains("debited"))
 				{
-					iciciDebit(tmp1);
+					iciciDebit(msg);
 				}
-				else if(tmp1.contains("SBI Debit Card") || tmp1.contains("Debited INR") || tmp1.contains("You have made a Debit Card purchase"))
+				else if(msg.contains("SBI Debit Card") || msg.contains("Debited INR"))
 				{
-					sbiDebit(tmp1);
+					sbiDebit(msg);
 				}
-				else if(tmp1.contains("American Express Card"))
+				else if(msg.contains("Dear Customer, You have made a Debit Card purchase") || msg.contains("WDL*"))
 				{
-					Amex(tmp1);
+					iciciDebit(msg);
+				}
+				else if(msg.contains("State Bank Internet Banking"))
+				{
+					sbiDebit(msg);
+				}
+				else if(msg.contains("HDFC Bank DEBIT"))
+				{
+					hdfcDebit(msg);
 				}
 			}
 		}
 		//sms=sms+"Total "+ total +"";
 		total=icicBank+hdfcCredit+city+iciciDB+sbi;
 		cn=getCount();
-		
+
 		return total;
 	}
 	public void iciciCredit(String tmp1)
@@ -180,6 +177,15 @@ public class GetData {
 		tmp2=separated[1];
 		hdfcCredit=Float.valueOf((tmp2))+hdfcCredit;
 	}
+	public void hdfcDebit(String tmp1)
+	{
+		String tmp2="";
+		String[] separated = tmp1.split("Rs.");
+		tmp2=separated[1];
+		String[] separated1 = tmp2.split("towards");
+		tmp1=separated1[0];
+		hdfcDebit=Float.valueOf((tmp1))+hdfcDebit;
+	}
 	public void cityAtm(String tmp1)
 	{
 		String tmp2="";
@@ -192,14 +198,47 @@ public class GetData {
 	public void iciciDebit(String tmp1)
 	{
 		String tmp2="";
-		String[] separated = tmp1.split("with");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("INR");
-		tmp2=separated1[1];
-		String[] separated2 = tmp2.split("on");
-		tmp2=separated2[0];
-		tmp2=tmp2.replaceAll(",", "");
-		iciciDB=Float.valueOf((tmp2))+iciciDB;
+		if(tmp1.contains("Debit Card purchase"))
+		{
+			String[] separatednew = tmp1.split("INR");
+			tmp2=separatednew[1];
+			String[] separatednew1 = tmp2.split("on");
+			tmp1=separatednew1[0];
+			tmp1=tmp1.replaceAll(",", "");
+			iciciDB=Float.valueOf((tmp1))+iciciDB;
+		}
+		else if(tmp1.contains("Dear Customer, Your Ac") && tmp1.contains("debited"))
+		{
+			String[] separated = tmp1.split("with");
+			tmp2=separated[1];
+			String[] separated1 = tmp2.split("INR");
+			tmp2=separated1[1];
+			String[] separated2 = tmp2.split("on");
+			tmp2=separated2[0];
+			tmp2=tmp2.replaceAll(",", "");
+			iciciDB=Float.valueOf((tmp2))+iciciDB;
+		}
+		else if (tmp1.contains("WDL"))
+		{
+			if(tmp1.contains("ATM"))
+			{
+				String[] separated = tmp1.split("INR");
+				tmp2=separated[1];
+				String[] separated1 = tmp2.split("ATM");
+				tmp2=separated1[0];
+				tmp2=tmp2.replaceAll(",", "");
+				iciciDB=Float.valueOf((tmp2))+iciciDB;
+			}
+			if(tmp1.contains("NFS"))
+			{
+				String[] separated = tmp1.split("INR");
+				tmp2=separated[1];
+				String[] separated1 = tmp2.split("NFS");
+				tmp2=separated1[0];
+				tmp2=tmp2.replaceAll(",", "");
+				iciciDB=Float.valueOf((tmp2))+iciciDB;
+			}
+		}
 		//Log.w("ICICI Bank", tmp2+"");
 	}
 	public void sbiDebit(String tmp1)
@@ -247,6 +286,15 @@ public class GetData {
 			String[] separated1 = tmp2.split("on");
 			tmp2=separated1[0];
 			tmp2=tmp2.replaceAll(",", "");
+			sbi=Float.valueOf((tmp2))+sbi;
+		}
+		else if (tmp1.contains("State Bank Internet Banking"))
+		{
+			String tmp2="";
+			String[] separated = tmp1.split("Rs.");
+			tmp2=separated[1];
+			String[] separated1 = tmp2.split("on");
+			tmp2=separated1[0];
 			sbi=Float.valueOf((tmp2))+sbi;
 		}
 	}

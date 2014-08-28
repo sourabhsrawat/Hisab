@@ -26,6 +26,7 @@ public class MainAdapter extends BaseAdapter {
 	private String mnt;
 	private String result;
 	private int i=0;
+	private int col=0;
 	private int count;
 	private List<String> cardName;
 	private List<Float> cardAmt;
@@ -107,7 +108,7 @@ public class MainAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup arg2) {
 		// TODO Auto-generated method stub
 		final Holder holder;
-		Log.w("Count in adapter",count+"");
+		//Log.w("Count in adapter",count+"");
 		//int type = getItemViewType(position);
 		if (convertView == null) {
 			holder = new Holder();
@@ -130,10 +131,11 @@ public class MainAdapter extends BaseAdapter {
 			{
 				if(position % 2== 0)
 				{
-					
+					col=itrCl.next();
 					convertView = mInflater.inflate(R.layout.graph,null);
 					holder.card=(TextView) convertView.findViewById(id.card);
-					holder.card.setTextSize(20);
+					holder.card.setTextSize(18);
+					//holder.card.setTextColor(col);
 					holder.card.setText(itrName.next()+" " + itrAmt.next());
 					i++;
 				}
@@ -144,11 +146,11 @@ public class MainAdapter extends BaseAdapter {
 				else{
 					convertView = mInflater.inflate(R.layout.graph,null);
 					holder.mText=(TextView) convertView.findViewById(id.rowgf);
-					holder.mText.setHeight(20);
+					holder.mText.setHeight(16);
 					holder.mText.setMaxWidth(700);
 					int tmp = (int) (700*itrPer.next());
 					holder.mText.setWidth(tmp);
-					holder.mText.setBackgroundColor(itrCl.next());
+					holder.mText.setBackgroundColor(col);
 				}
 			}
 
