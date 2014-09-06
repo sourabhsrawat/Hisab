@@ -61,7 +61,7 @@ public class GetData {
 		}
 		if(iciciDB>0)
 		{
-			setParm(iciciDB,"ICICI Debit",Color.BLACK);
+			setParm(iciciDB,"ICICI Debit",Color.GRAY+Color.RED);
 			count++;
 		}
 		if(sbi>0)
@@ -86,15 +86,18 @@ public class GetData {
 	{
 		amt.add(cardAmt);
 		cardName.add(cName);
-		percent.add(cardAmt/total);
+		//percent.add((cardAmt/total)*100);
+		int d = (int) Math.ceil(cardAmt);
+		percent.add((float) d );
+		
 		cl.add(col);
 	}
 
-	public float getTotal()
+	public int getTotal()
 	{
 		int mnt = CfgDate.getEndMonth();
 		int year = CfgDate.getEndYear();
-		Uri uriSMSURI = Uri.parse("content://sms/");
+		Uri uriSMSURI = Uri.parse("content://sms/inbox");
 		cur = cR.query(uriSMSURI, null, null, null,null);
 		Calendar cl = Calendar.getInstance();
 		while (cur.moveToNext()) {
@@ -148,8 +151,9 @@ public class GetData {
 		//sms=sms+"Total "+ total +"";
 		total=icicBank+hdfcCredit+city+iciciDB+sbi;
 		cn=getCount();
-
-		return total;
+		int d = (int) Math.ceil(total);
+		//total=d;
+		return d;
 	}
 	public void iciciCredit(String tmp1)
 	{
