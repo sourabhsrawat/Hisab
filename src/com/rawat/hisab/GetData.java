@@ -14,6 +14,8 @@ public class GetData {
 	private Cursor cur;
 	private ConfigDate CfgDate;
 	private ContentResolver cR;
+	
+	///Bank variables
 	private float icicBank=0;
 	private float hdfcCredit=0;
 	private float city=0;
@@ -21,6 +23,9 @@ public class GetData {
 	private float sbi=0;
 	private float amex=0;
 	private float hdfcDebit=0;
+	private float stanChart=0;
+	
+	
 	public static int count=0;
 	public int cn=0;
 	private List<Float> amt;
@@ -28,6 +33,7 @@ public class GetData {
 	private List<Float> percent;
 	private List<Integer> cl;
 	private float total=0 ;
+	
 	public GetData(ConfigDate Cfg, ContentResolver c)
 	{
 		this.CfgDate=Cfg;
@@ -46,17 +52,17 @@ public class GetData {
 		count=0;
 		if(icicBank > 0)
 		{
-			setParm(icicBank,"ICICI CREDIT",Color.RED);
+			setParm(icicBank,"ICICI Credit",Color.RED);
 			count++;
 		}
 		if(hdfcCredit > 0 )
 		{
-			setParm(hdfcCredit,"HDFC",Color.BLUE);
+			setParm(hdfcCredit,"HDFC Credit",Color.BLUE);
 			count++;
 		}
 		if(city>0)
 		{
-			setParm(city,"CITI",Color.GREEN);
+			setParm(city,"CITI Debit",Color.GREEN);
 			count++;
 		}
 		if(iciciDB>0)
@@ -71,13 +77,17 @@ public class GetData {
 		}
 		if(amex>0)
 		{
-			setParm(amex,"Amex",Color.CYAN);
+			setParm(amex,"Amex Credit",Color.CYAN);
 			count++;
 		}
 		if(hdfcDebit>0)
 		{
 			setParm(hdfcDebit,"HDFC Debit",Color.MAGENTA);
 			count++;
+		}
+		if(stanChart >0)
+		{
+			setParm(stanChart,"Standard Chartered Credit",Color.YELLOW);
 		}
 		
 		return count;
@@ -145,6 +155,10 @@ public class GetData {
 				else if(msg.contains("HDFC Bank DEBIT"))
 				{
 					hdfcDebit(msg);
+				}
+				else if(msg.contains("StanChart Credit"))
+				{
+					StandChart(msg);
 				}
 			}
 		}
@@ -311,6 +325,15 @@ public class GetData {
 		tmp2=separated1[0];
 		tmp2=tmp2.replaceAll(",", "");
 		amex=Float.valueOf((tmp2))+amex;
+	}
+	public void StandChart(String tmp1)
+	{
+		String tmp2="";
+		String[] separated = tmp1.split("INR");
+		tmp2=separated[1];
+		String[] separated1 = tmp2.split(". For");
+		tmp2=separated1[0];
+		stanChart=Float.valueOf((tmp2))+stanChart;
 	}
 	public List<Float> getCardAmt()
 	{

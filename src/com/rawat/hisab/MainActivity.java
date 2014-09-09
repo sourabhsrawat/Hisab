@@ -51,14 +51,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		mainListView = (ListView) findViewById( R.id.mainListView ); 
 		ActionBar actionBar = getSupportActionBar(); 
 		actionBar.setDisplayHomeAsUpEnabled(false);
-
 		CfgDate = (ConfigDate) getApplication();
-		Calendar calendar = Calendar.getInstance();
-		int yr = calendar.get(Calendar.YEAR);
-		int mn = calendar.get(Calendar.MONTH);
-		CfgDate.setEndYear(yr);
-		CfgDate.setEndMonth(mn+1);
-		
+		if(CfgDate.getEndMonth() == 0)
+		{
+			
+
+			Calendar calendar = Calendar.getInstance();
+			int yr = calendar.get(Calendar.YEAR);
+			int mn = calendar.get(Calendar.MONTH);
+			CfgDate.setEndYear(yr);
+			CfgDate.setEndMonth(mn+1);
+		}
 		//openChart();
 		openRefresh();
 
@@ -80,6 +83,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		else
 		{
 			month=month +"\n" + CfgDate.getEndYear();
+			//month=CfgDate.getEndYear() +"";
 			bedMenuItem.setTitle(month);
 		}
 
@@ -155,7 +159,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	DatePickerDialog.OnDateSetListener mDateSetListner = new OnDateSetListener() {
 
 		@Override
@@ -180,7 +184,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	}
 	protected Dialog onCreateDialog(int id) 
 	{
-		
+
 		//return new DatePickerDialog(this, datePickerListener, year_Ed, month_Ed, day_Ed);
 		DatePickerDialog datePickerDialog = this.customDatePicker();
 		datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
@@ -223,6 +227,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	private void updateMenuTitles() {
 		bedMenuItem = menu.findItem(R.id.action_settings);
 		month=month +"\n" + CfgDate.getEndYear();
+		
 		bedMenuItem.setTitle(month);
 
 	}
@@ -234,60 +239,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		openRefresh();
 	}
 
-	private View openChart(){
-
-
-		// Pie Chart Section Names
-		String[] code = new String[] {
-				"Eclair & Older", "Froyo", "Gingerbread", "Honeycomb",
-				"IceCream Sandwich", "Jelly Bean"
-		};
-
-		// Pie Chart Section Value
-		double[] distribution = { 3.9, 12.9, 55.8, 1.9, 23.7, 1.8 } ;
-
-		// Color of each Pie Chart Sections
-		int[] colors = { Color.BLUE, Color.MAGENTA, Color.GREEN, Color.CYAN, Color.RED,
-				Color.YELLOW };
-
-		// Instantiating CategorySeries to plot Pie Chart
-		CategorySeries distributionSeries = new CategorySeries(" Pie");
-		for(int i=0 ;i < distribution.length;i++){
-			// Adding a slice with its values and name to the Pie Chart
-			distributionSeries.add(code[i], distribution[i]);
-		}
-
-		// Instantiating a renderer for the Pie Chart
-		DefaultRenderer defaultRenderer  = new DefaultRenderer();
-		for(int i = 0 ;i<distribution.length;i++){
-			SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
-			seriesRenderer.setColor(colors[i]);
-			//seriesRenderer.setDisplayChartValues(true);
-			// Adding a renderer for a slice
-			defaultRenderer.addSeriesRenderer(seriesRenderer);
-		}
-
-		defaultRenderer.setChartTitle("PIe ");
-		defaultRenderer.setChartTitleTextSize(20);
-		defaultRenderer.setZoomButtonsVisible(true);
-		defaultRenderer.setBackgroundColor(Color.GRAY);
-		defaultRenderer.setDisplayValues(true);
-		// Getting a reference to LinearLayout of the MainActivity Layout
-		//LinearLayout chartContainer = (LinearLayout) findViewById(R.id.chart_container);
-
-		// Creating a Line Chart
-		mChart = ChartFactory.getPieChartView(getBaseContext(), distributionSeries , defaultRenderer);
-
-		// Adding the Line Chart to the LinearLayout
-		//chartContainer.addView(mChart);
-
-		// Creating an intent to plot bar chart using dataset and multipleRenderer
-		// Intent intent = ChartFactory.getPieChartIntent(getBaseContext(), distributionSeries , defaultRenderer, "AChartEnginePieChartDemo");
-
-		// Start Activity
-		// startActivity(intent);
-		return mChart;
-	}
-
+	
 
 }

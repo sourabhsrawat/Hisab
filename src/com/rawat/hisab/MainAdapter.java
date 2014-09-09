@@ -87,7 +87,7 @@ public class MainAdapter extends BaseAdapter {
 	{
 		TextView mText;
 		TextView card;
-		RelativeLayout lo;
+		LinearLayout lo;
 	}
 	public void setMnt(String mt)
 	{
@@ -159,7 +159,7 @@ public class MainAdapter extends BaseAdapter {
 				if(ck >0)
 				{
 					convertView = mInflater.inflate(R.layout.chart,null);
-					holder.lo=(RelativeLayout) convertView.findViewById(id.chart_container);
+					holder.lo=(LinearLayout) convertView.findViewById(id.chart_container);
 					holder.lo.addView(openChart());
 				}
 				else {
