@@ -3,6 +3,7 @@ package com.rawat.hisab;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -18,6 +19,8 @@ import com.rawat.hisab.R.id;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -194,11 +197,18 @@ public class MainAdapter extends BaseAdapter {
 		// Instantiating a renderer for the Pie Chart
 		final DefaultRenderer defaultRenderer  = new DefaultRenderer();
 		while(itrCl.hasNext()){
-
+			Random rnd = new Random(); 
+			
+			int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 			// Instantiating a render for the slice
+			final float hue = rnd.nextFloat();
+			final float saturation = 0.8f;//1.0 for brilliant, 0.0 for dull
+			final float luminance = 0.8f; //1.0 for brighter, 0.0 for black
+			float hsv [] ={hue,saturation,luminance};
+			Color.colorToHSV(color, hsv);
 			SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
-			seriesRenderer.setColor(itrCl.next());
-
+			seriesRenderer.setColor(color);
+			itrCl.next();
 			defaultRenderer.addSeriesRenderer(seriesRenderer);
 		}
 

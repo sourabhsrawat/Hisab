@@ -8,13 +8,14 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
 
 public class GetData {
 
 	private Cursor cur;
 	private ConfigDate CfgDate;
 	private ContentResolver cR;
-	
+
 	///Bank variables
 	private float icicBank=0;
 	private float hdfcCredit=0;
@@ -24,8 +25,8 @@ public class GetData {
 	private float amex=0;
 	private float hdfcDebit=0;
 	private float stanChart=0;
-	
-	
+
+
 	public static int count=0;
 	public int cn=0;
 	private List<Float> amt;
@@ -33,7 +34,7 @@ public class GetData {
 	private List<Float> percent;
 	private List<Integer> cl;
 	private float total=0 ;
-	
+
 	public GetData(ConfigDate Cfg, ContentResolver c)
 	{
 		this.CfgDate=Cfg;
@@ -89,7 +90,7 @@ public class GetData {
 		{
 			setParm(stanChart,"Standard Chartered Credit",Color.YELLOW);
 		}
-		
+
 		return count;
 	}
 	private void setParm(float cardAmt, String cName, int col)
@@ -99,7 +100,6 @@ public class GetData {
 		//percent.add((cardAmt/total)*100);
 		int d = (int) Math.ceil(cardAmt);
 		percent.add((float) d );
-		
 		cl.add(col);
 	}
 
@@ -120,45 +120,81 @@ public class GetData {
 				String msg="";
 				msg=cur.getString(12);
 				//Log.w("msg", msg);
-				if(msg.contains("Tranx of INR"))
+				if(msg.contains(CardComponent.iciciCredit_Check))
 				{
-					iciciCredit(msg);	
+					icicBank=getCreditAmt(CardComponent.iciciCredit_Split,msg)+icicBank;
 				}	
-				else if(msg.contains("HDFCBank CREDIT Card"))
+				else if(msg.contains(CardComponent.hdfcCredit_Check))
 				{
-					hdfcBankCredit(msg);
+					hdfcCredit=getCreditAmt(CardComponent.hdfcCredit_Split,msg)+hdfcCredit;
 				}
-				else if(msg.contains("HDFC Bank credit card to pay your SMARTPAY"))
+				else if(msg.contains(CardComponent.hdfcCreditSMT_Check))
 				{
-					hdfcBankSmt(msg);
+					//hdfcCredit=getCreditAmt(CardComponent.hdfcCreditSMT_Split,msg)+hdfcCredit;
+					String tmp2="";
+					String[] separated = msg.split("Rs.");
+					tmp2=separated[1];
+					hdfcCredit=Float.valueOf((tmp2))+hdfcCredit;
 				}
-				else if(msg.contains("Citibank ATM"))
+				else if(msg.contains(CardComponent.cityAtm_Check))
 				{
-					cityAtm(msg);
+					city=getCreditAmt(CardComponent.cityAtm_Split,msg)+city;
 				}
-				else if(msg.contains("Dear Customer, Your Ac") && msg.contains("debited"))
+				else if(msg.contains(CardComponent.iciciDebit_Check1) && msg.contains(CardComponent.iciciDebit_Check2))
 				{
 					iciciDebit(msg);
 				}
-				else if(msg.contains("SBI Debit Card") || msg.contains("Debited INR"))
+				else if(msg.contains(CardComponent.sbiDebit_Check) || msg.contains(CardComponent.sbiDebit_Check2))
 				{
-					sbiDebit(msg);
+					if(msg.contains(CardComponent.sbiDebit_in2_Check2))
+					{
+						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_in2_Split,msg)+sbi;
+					}
+					else if(msg.contains(CardComponent.sbiDebit_in3_Check2))
+					{
+						String tmp2="";
+						String[] separated = msg.split("Rs");
+						tmp2=separated[1];
+						sbi=Float.valueOf((tmp2))+sbi;
+					}
+					else if(msg.contains(CardComponent.sbiDebit_Check1))
+					{
+						sbi=getCreditAmt(CardComponent.sbiDebit_Check1_Split,msg)+sbi;
+					}
+					else if (msg.contains(CardComponent.sbiDebit_Check2))
+					{
+						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_Split,msg)+sbi;
+					}
+					else if (msg.contains(CardComponent.sbiDebit_in1_Check2))
+					{
+						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_Split,msg)+sbi;
+					}
 				}
-				else if(msg.contains("Dear Customer, You have made a Debit Card purchase") || msg.contains("WDL*"))
+				else if(msg.contains(CardComponent.iciciDebitPurchase_Check) || msg.contains(CardComponent.iciciDebit_Check3))
 				{
 					iciciDebit(msg);
 				}
-				else if(msg.contains("State Bank Internet Banking"))
+				else if(msg.contains(CardComponent.sbiDebitIB_Check))
 				{
-					sbiDebit(msg);
+					sbi=getCreditAmt(CardComponent.sbiDebitIB_Check_Split,msg)+sbi;
 				}
-				else if(msg.contains("HDFC Bank DEBIT"))
+				else if(msg.contains(CardComponent.amex_Check1)&&msg.contains(CardComponent.amex_Check2)) 
 				{
-					hdfcDebit(msg);
+					amex=getCreditAmt(CardComponent.amex_Split,msg);
 				}
-				else if(msg.contains("StanChart Credit"))
+				else if(msg.contains(CardComponent.hdfcDebit_Check))
 				{
-					StandChart(msg);
+					hdfcDebit= getCreditAmt(CardComponent.hdfcDedit_Split,msg)+hdfcDebit;
+				}
+				else if(msg.contains(CardComponent.stanChartCredit_Check1))
+				{
+					if(msg.contains(CardComponent.stanChartCredit_Check2))
+					{
+						stanChart=getCreditAmt(CardComponent.stanChartCredit_Split2,msg)+stanChart;
+					}
+					else{
+						stanChart=getCreditAmt(CardComponent.stanChartCredit_Split1,msg)+stanChart;
+					}
 				}
 			}
 		}
@@ -169,172 +205,47 @@ public class GetData {
 		//total=d;
 		return d;
 	}
-	public void iciciCredit(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("Tranx of INR");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("using");
-		tmp2=separated1[0];
-		tmp2=tmp2.replaceAll(",", "");
-		icicBank=Float.valueOf((tmp2))+icicBank;
-	}
-	public void hdfcBankCredit(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("Rs.");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("was");
-		tmp1=separated1[0];
-		hdfcCredit=Float.valueOf((tmp1))+hdfcCredit;
-	}
-	public void hdfcBankSmt(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("Rs.");
-		tmp2=separated[1];
-		hdfcCredit=Float.valueOf((tmp2))+hdfcCredit;
-	}
-	public void hdfcDebit(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("Rs.");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("towards");
-		tmp1=separated1[0];
-		hdfcDebit=Float.valueOf((tmp1))+hdfcDebit;
-	}
-	public void cityAtm(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("Rs.");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("was");
-		tmp1=separated1[0];
-		city=Float.valueOf((tmp1))+city;
-	}
+
 	public void iciciDebit(String tmp1)
 	{
-		String tmp2="";
-		if(tmp1.contains("Debit Card purchase"))
+		if(tmp1.contains(CardComponent.iciciDebitPurchase_Check))
 		{
-			String[] separatednew = tmp1.split("INR");
-			tmp2=separatednew[1];
-			String[] separatednew1 = tmp2.split("on");
-			tmp1=separatednew1[0];
-			tmp1=tmp1.replaceAll(",", "");
-			iciciDB=Float.valueOf((tmp1))+iciciDB;
+			iciciDB=getCreditAmt(CardComponent.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
 		}
-		else if(tmp1.contains("Dear Customer, Your Ac") && tmp1.contains("debited"))
+		else if(tmp1.contains(CardComponent.iciciDebit_Check1) && tmp1.contains(CardComponent.iciciDebit_Check2))
 		{
-			String[] separated = tmp1.split("with");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("INR");
-			tmp2=separated1[1];
-			String[] separated2 = tmp2.split("on");
-			tmp2=separated2[0];
-			tmp2=tmp2.replaceAll(",", "");
-			iciciDB=Float.valueOf((tmp2))+iciciDB;
+			iciciDB=getCreditAmt(CardComponent.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
 		}
-		else if (tmp1.contains("WDL"))
+		else if (tmp1.contains(CardComponent.iciciDebit_in_Check))
 		{
-			if(tmp1.contains("ATM"))
+			if(tmp1.contains(CardComponent.iciciDebit_in1_Check))
 			{
-				String[] separated = tmp1.split("INR");
-				tmp2=separated[1];
-				String[] separated1 = tmp2.split("ATM");
-				tmp2=separated1[0];
-				tmp2=tmp2.replaceAll(",", "");
-				iciciDB=Float.valueOf((tmp2))+iciciDB;
+				iciciDB=getCreditAmt(CardComponent.iciciDebit_in1_Split,tmp1)+iciciDB;
 			}
-			if(tmp1.contains("NFS"))
+			if(tmp1.contains(CardComponent.iciciDebit_in2_Check))
 			{
-				String[] separated = tmp1.split("INR");
-				tmp2=separated[1];
-				String[] separated1 = tmp2.split("NFS");
-				tmp2=separated1[0];
-				tmp2=tmp2.replaceAll(",", "");
-				iciciDB=Float.valueOf((tmp2))+iciciDB;
+				iciciDB=getCreditAmt(CardComponent.iciciDebit_in2_Split,tmp1)+iciciDB;
 			}
 		}
 		//Log.w("ICICI Bank", tmp2+"");
 	}
-	public void sbiDebit(String tmp1)
+	public float getCreditAmt(String[]  str,String tmp1)
 	{
-		if(tmp1.contains("withdrawing"))
+		float amt=0;
+		int ln = str.length;
+		int i =0;
+		while(ln >0)
 		{
-			String tmp2="";
-			String[] separated = tmp1.split("Rs");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("from");
-			tmp2=separated1[0];
-			sbi=Float.valueOf((tmp2))+sbi;
+			--ln;
+			String[] separated = tmp1.split(str[i]);
+			tmp1=separated[ln];
+			i++;
 		}
-		else if(tmp1.contains("It would be our"))
-		{
-			String tmp2="";
-			String[] separated = tmp1.split("Rs");
-			tmp2=separated[1];
-			sbi=Float.valueOf((tmp2))+sbi;
-		}
-		else if(tmp1.contains("Thank you for using your SBI Debit Card"))
-		{
-			String tmp2="";
-			String[] separated = tmp1.split("Rs");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("on");
-			tmp2=separated1[0];
-			sbi=Float.valueOf((tmp2))+sbi;
-		}
-		else if (tmp1.contains("Debited INR"))
-		{
-			String tmp2="";
-			String[] separated = tmp1.split("INR");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("on");
-			tmp2=separated1[0];
-			tmp2=tmp2.replaceAll(",", "");
-			sbi=Float.valueOf((tmp2))+sbi;
-		}
-		else if (tmp1.contains("purchase"))
-		{
-			String tmp2="";
-			String[] separated = tmp1.split("INR");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("on");
-			tmp2=separated1[0];
-			tmp2=tmp2.replaceAll(",", "");
-			sbi=Float.valueOf((tmp2))+sbi;
-		}
-		else if (tmp1.contains("State Bank Internet Banking"))
-		{
-			String tmp2="";
-			String[] separated = tmp1.split("Rs.");
-			tmp2=separated[1];
-			String[] separated1 = tmp2.split("on");
-			tmp2=separated1[0];
-			sbi=Float.valueOf((tmp2))+sbi;
-		}
+		tmp1=tmp1.replaceAll(",", "");
+		amt=Float.valueOf((tmp1));
+		return amt;
 	}
-	public void Amex(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("INR");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split("has");
-		tmp2=separated1[0];
-		tmp2=tmp2.replaceAll(",", "");
-		amex=Float.valueOf((tmp2))+amex;
-	}
-	public void StandChart(String tmp1)
-	{
-		String tmp2="";
-		String[] separated = tmp1.split("INR");
-		tmp2=separated[1];
-		String[] separated1 = tmp2.split(". For");
-		tmp2=separated1[0];
-		stanChart=Float.valueOf((tmp2))+stanChart;
-	}
+
 	public List<Float> getCardAmt()
 	{
 		return amt;
