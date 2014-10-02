@@ -1,12 +1,15 @@
 package com.rawat.hisab;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.Calendar;
-import org.achartengine.ChartFactory;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.renderer.DefaultRenderer;
-import org.achartengine.renderer.SimpleSeriesRenderer;
+
 
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -14,9 +17,11 @@ import android.app.Dialog;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +30,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ListView;
+/*
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Logger;
+import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
+import 	com.google.android.gms.analytics.HitBuilders;
+import com.rawat.hisab.ConfigDate.TrackerName;
+*/
 
 public class MainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener{
 
@@ -36,26 +49,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	private Menu menu;
 	private String month;
 	private MenuItem bedMenuItem;
-	private View mChart;
 	private int mYear;
 	private int mMonth;
 	private int mDay;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.activity_main);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		// Find the ListView resource.   
 		mainListView = (ListView) findViewById( R.id.mainListView ); 
 		ActionBar actionBar = getSupportActionBar(); 
 		actionBar.setDisplayHomeAsUpEnabled(false);
+		//String defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(getBaseContext());
+		
+		//Log.w("APP",defaultSmsApp );
 		CfgDate = (ConfigDate) getApplication();
 		if(CfgDate.getEndMonth() == 0)
 		{
-			
-
 			Calendar calendar = Calendar.getInstance();
 			int yr = calendar.get(Calendar.YEAR);
 			int mn = calendar.get(Calendar.MONTH);
@@ -107,20 +121,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	}
 
 	private void openRefresh() {
+		
+		/*Tracker t = ((ConfigDate) getApplication()).getTracker(TrackerName.APP_TRACKER);
+		t.setScreenName("MainActivity");
+		t.send(new HitBuilders.AppViewBuilder().build());*/
 		CfgDate = (ConfigDate) getApplication();
 		md= new MainAdapter(this,this);
 		md.setMnt(CfgDate.getMonthInWrd());
-		md.setYear(CfgDate.getEndYear());
-		GetData data = new GetData(CfgDate,getContentResolver());
+		//md.setYear(CfgDate.getEndYear());
+		GetData data = new GetData(CfgDate,this.getContentResolver());
 		int total = data.getTotal();
 		md.setCheck(total);
 		md.setResult(total+"");
 		md.setCardAmt(data.getCardAmt());
 		md.setCardName(data.getCardName());
-		md.setPercent(data.getPercent());
-		md.setColor(data.getColor());
 		//md.setVw(openChart());
 		mainListView.setAdapter(md);
+		//logWrite();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -240,5 +257,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	}
 
 	
+public void logWrite()
+{
+	try {
+	      Process process = Runtime.getRuntime().exec("logcat -d");
+	      BufferedReader bufferedReader = new BufferedReader(
+	      new InputStreamReader(process.getInputStream()));
+	                       
+	      StringBuilder log=new StringBuilder();
+	      String line;
+	      while ((line = bufferedReader.readLine()) != null) {
+	        log.append(line);
+	      }
+	      File myFile = new File("/sdcard/hisablog.txt");
+			myFile.createNewFile();
+			FileOutputStream fOut = new FileOutputStream(myFile);
+			OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+			myOutWriter.append(log);
+			myOutWriter.close();
+			fOut.close();
+	      
+	    } catch (IOException e) {
+	    }
+}
 
 }

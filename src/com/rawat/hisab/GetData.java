@@ -1,13 +1,15 @@
 package com.rawat.hisab;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
+import android.provider.Telephony;
+import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class GetData {
@@ -17,32 +19,32 @@ public class GetData {
 	private ContentResolver cR;
 
 	///Bank variables
-	private float icicBank=0;
-	private float hdfcCredit=0;
-	private float city=0;
-	private float iciciDB=0;
-	private float sbi=0;
-	private float amex=0;
-	private float hdfcDebit=0;
-	private float stanChart=0;
+	private double icicBank=0;
+	private double hdfcCredit=0;
+	private double city=0;
+	private double iciciDB=0;
+	private double sbi=0;
+	private double amex=0;
+	private double hdfcDebit=0;
+	private double stanChart=0;
+	private double kotakDebit=0;
+	private double bob=0;
+	private double citiCredit=0;
 
 
 	public static int count=0;
 	public int cn=0;
-	private List<Float> amt;
+	private List<Double> amt;
 	private List<String> cardName;
-	private List<Float> percent;
-	private List<Integer> cl;
-	private float total=0 ;
+	private double total=0 ;
 
 	public GetData(ConfigDate Cfg, ContentResolver c)
 	{
 		this.CfgDate=Cfg;
 		this.cR = c;
-		amt = new ArrayList<Float>();
+		amt = new ArrayList<Double>();
 		cardName=new ArrayList<String>();
-		percent= new ArrayList<Float>();
-		cl= new ArrayList<Integer>();
+
 	}
 	public void setTotal(String t)
 	{
@@ -53,54 +55,67 @@ public class GetData {
 		count=0;
 		if(icicBank > 0)
 		{
-			setParm(icicBank,"ICICI Credit",Color.RED);
+			setParm(icicBank,"ICICI Credit");
 			count++;
 		}
 		if(hdfcCredit > 0 )
 		{
-			setParm(hdfcCredit,"HDFC Credit",Color.BLUE);
+			setParm(hdfcCredit,"HDFC Credit");
 			count++;
 		}
 		if(city>0)
 		{
-			setParm(city,"CITI Debit",Color.GREEN);
+			setParm(city,"CITI Debit");
 			count++;
 		}
 		if(iciciDB>0)
 		{
-			setParm(iciciDB,"ICICI Debit",Color.GRAY+Color.RED);
+			setParm(iciciDB,"ICICI Debit");
 			count++;
 		}
 		if(sbi>0)
 		{
-			setParm(sbi,"SBI Debit",Color.LTGRAY);
+			setParm(sbi,"SBI Debit");
 			count++;
 		}
 		if(amex>0)
 		{
-			setParm(amex,"Amex Credit",Color.CYAN);
+			setParm(amex,"Amex Credit");
 			count++;
 		}
 		if(hdfcDebit>0)
 		{
-			setParm(hdfcDebit,"HDFC Debit",Color.MAGENTA);
+			setParm(hdfcDebit,"HDFC Debit");
 			count++;
 		}
 		if(stanChart >0)
 		{
-			setParm(stanChart,"Standard Chartered Credit",Color.YELLOW);
+			setParm(stanChart,"Standard Chartered Credit");
+		}
+		if(kotakDebit >0)
+		{
+			setParm(kotakDebit,"Kotak Debit Card");
+		}
+		if(bob > 0)
+		{
+			setParm(bob,"BOB");
+		}
+		if(citiCredit > 0)
+		{
+			setParm(citiCredit,"Citi Credit");
 		}
 
 		return count;
 	}
-	private void setParm(float cardAmt, String cName, int col)
+	private void setParm(double cardAmt, String cName)
 	{
+		BigDecimal bd = new BigDecimal(Double.toString(cardAmt));
+	    bd = bd.setScale(2, BigDecimal.ROUND_UP);
+	    cardAmt=bd.doubleValue();
+	    
 		amt.add(cardAmt);
 		cardName.add(cName);
 		//percent.add((cardAmt/total)*100);
-		int d = (int) Math.ceil(cardAmt);
-		percent.add((float) d );
-		cl.add(col);
 	}
 
 	public int getTotal()
@@ -108,18 +123,21 @@ public class GetData {
 		int mnt = CfgDate.getEndMonth();
 		int year = CfgDate.getEndYear();
 		Uri uriSMSURI = Uri.parse("content://sms/inbox");
-		cur = cR.query(uriSMSURI, null, null, null,null);
+		
+		cur = cR.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null,null);
 		Calendar cl = Calendar.getInstance();
+		
+	//	SmsMessage[] smsList = Telephony.Sms.Intents.getMessagesFromIntent(intent);
 		while (cur.moveToNext()) {
 			long ms= Long.parseLong(cur.getString(4));
 
 			cl.setTimeInMillis(ms);
-
+			Log.w("msg", cur.getString(12));
 			if(cl.get(Calendar.MONTH)+1==mnt && cl.get(Calendar.YEAR) == year )
 			{
 				String msg="";
 				msg=cur.getString(12);
-				//Log.w("msg", msg);
+				Log.w("msg", cur.getString(1));
 				if(msg.contains(CardComponent.iciciCredit_Check))
 				{
 					icicBank=getCreditAmt(CardComponent.iciciCredit_Split,msg)+icicBank;
@@ -134,11 +152,25 @@ public class GetData {
 					String tmp2="";
 					String[] separated = msg.split("Rs.");
 					tmp2=separated[1];
-					hdfcCredit=Float.valueOf((tmp2))+hdfcCredit;
+					hdfcCredit=Double.valueOf((tmp2))+hdfcCredit;
 				}
 				else if(msg.contains(CardComponent.cityAtm_Check))
 				{
 					city=getCreditAmt(CardComponent.cityAtm_Split,msg)+city;
+					Log.w("msg", msg);
+				}
+				else if(msg.contains(CardComponent.cityDebit_Check1))
+				{
+					if(msg.contains(CardComponent.cityDebit_Check2))
+					{
+						city=getCreditAmt(CardComponent.cityDebit_Split,msg)+city;
+						Log.w("msg", msg);
+					}
+				}
+				else if(msg.contains(CardComponent.cityCredit_Check))
+				{
+					citiCredit=getCreditAmt(CardComponent.cityCredit_Split,msg)+citiCredit;
+				
 				}
 				else if(msg.contains(CardComponent.iciciDebit_Check1) && msg.contains(CardComponent.iciciDebit_Check2))
 				{
@@ -155,7 +187,7 @@ public class GetData {
 						String tmp2="";
 						String[] separated = msg.split("Rs");
 						tmp2=separated[1];
-						sbi=Float.valueOf((tmp2))+sbi;
+						sbi=Double.valueOf((tmp2))+sbi;
 					}
 					else if(msg.contains(CardComponent.sbiDebit_Check1))
 					{
@@ -196,10 +228,19 @@ public class GetData {
 						stanChart=getCreditAmt(CardComponent.stanChartCredit_Split1,msg)+stanChart;
 					}
 				}
+				else if (msg.contains(CardComponent.kotakDebit_Check))
+				{
+					kotakDebit=getCreditAmt(CardComponent.kotakDebit_Split,msg)+kotakDebit;
+				}
+				else if (msg.contains(CardComponent.bob_Check))
+				{
+					bob=getCreditAmt(CardComponent.bob_Split,msg)+bob;
+				}
 			}
 		}
 		//sms=sms+"Total "+ total +"";
-		total=icicBank+hdfcCredit+city+iciciDB+sbi;
+		total=icicBank+hdfcCredit+city+iciciDB+sbi+kotakDebit+bob+amex+hdfcDebit+stanChart+citiCredit;
+		
 		cn=getCount();
 		int d = (int) Math.ceil(total);
 		//total=d;
@@ -229,24 +270,37 @@ public class GetData {
 		}
 		//Log.w("ICICI Bank", tmp2+"");
 	}
-	public float getCreditAmt(String[]  str,String tmp1)
+	public double getCreditAmt(String[]  str,String tmp1)
 	{
-		float amt=0;
+		double amt=0;
 		int ln = str.length;
 		int i =0;
 		while(ln >0)
 		{
 			--ln;
+			try{
 			String[] separated = tmp1.split(str[i]);
 			tmp1=separated[ln];
 			i++;
+			}
+			catch(ArrayIndexOutOfBoundsException e)
+			{
+				Log.w("ArrayIndexOutOfBoundsException",e.getMessage());
+			}
 		}
 		tmp1=tmp1.replaceAll(",", "");
-		amt=Float.valueOf((tmp1));
+		try{
+			amt=Double.valueOf((tmp1));
+		}
+		catch(NumberFormatException e)
+		{
+			Log.w("NumberFormatException",e.getMessage());
+		}
+	   
 		return amt;
 	}
 
-	public List<Float> getCardAmt()
+	public List<Double> getCardAmt()
 	{
 		return amt;
 	}
@@ -254,12 +308,5 @@ public class GetData {
 	{
 		return cardName;
 	}
-	public List<Float> getPercent()
-	{
-		return percent;
-	}
-	public List<Integer> getColor()
-	{
-		return cl;
-	}
+	
 }

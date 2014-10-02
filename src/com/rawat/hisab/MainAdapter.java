@@ -1,5 +1,6 @@
 package com.rawat.hisab;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +12,6 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
-
 
 
 import com.rawat.hisab.R.id;
@@ -26,9 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,19 +37,13 @@ public class MainAdapter extends BaseAdapter {
 	private Activity aa;
 	private String mnt;
 	private String result;
-	private int i=0;
-	private int col=0;
-	private int count;
+	
 	private List<String> cardName;
-	private List<Float> cardAmt;
-	private List<Float> percent;
-	private List<Integer> cl;
+	private List<Double> cardAmt;
+	
 	private Iterator<String> itrName;
-	private Iterator<Float> itrAmt;
-	private Iterator<Float> itrPer;
-	private Iterator<Integer> itrCl;
-	private String[] code;
-	private int yr;
+	private Iterator<Double> itrAmt;
+	
 	private int ck;
 
 
@@ -60,19 +52,17 @@ public class MainAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(context);
 		this.mContext=context;
 		this.aa=a;
-		count=GetData.count;
+		
 		cardName= new ArrayList<String>();
-		cardAmt = new ArrayList<Float>();
-		percent= new ArrayList<Float>();
-
+		cardAmt = new ArrayList<Double>();
 	}
 
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
 		//return 2+count*2;
-			return 3;
-		
+		return 3;
+
 	}
 
 	@Override
@@ -104,15 +94,12 @@ public class MainAdapter extends BaseAdapter {
 	{
 		this.ck=i;
 	}
-	public void setYear(int yr)
-	{
-		this.yr=yr;
-	}
+	
 	public void setResult(String rst)
 	{
 		this.result=rst ;
 	}
-	public void setCardAmt(List<Float> amt)
+	public void setCardAmt(List<Double> amt)
 	{
 		this.cardAmt=amt;
 		itrAmt=cardAmt.iterator();
@@ -123,16 +110,7 @@ public class MainAdapter extends BaseAdapter {
 		this.cardName=cardName;
 		itrName=cardName.iterator();
 	}
-	public void setPercent(List<Float> percent)
-	{
-		this.percent=percent;
-		itrPer=percent.iterator();
-	}
-	public void setColor(List<Integer> cl)
-	{
-		this.cl=cl;
-		itrCl=cl.iterator();
-	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup arg2) {
 		// TODO Auto-generated method stub
@@ -143,7 +121,7 @@ public class MainAdapter extends BaseAdapter {
 			holder = new Holder();
 			//switch (position) {
 			//case 0:
-			
+
 			if(position == 0)
 			{
 				convertView = mInflater.inflate(R.layout.simplerow,null);
@@ -170,7 +148,6 @@ public class MainAdapter extends BaseAdapter {
 					holder.mText=(TextView) convertView.findViewById(id.rowTextView);
 					holder.mText.setTextSize(20);
 					holder.mText.setText("No expenses found for this month. " );
-
 				}
 			}
 
@@ -183,35 +160,25 @@ public class MainAdapter extends BaseAdapter {
 		}
 		return convertView;
 	}
+	
 	private GraphicalView openChart(){
 		//GraphicalView mChart;
 		// Pie Chart Slice Names
 
 		final CategorySeries distributionSeries = new CategorySeries("Bank List");
-
 		//Log.w("Before while", "series" );
-		while(itrName.hasNext())
-		{
-			distributionSeries.add(itrName.next(),itrPer.next());
-		}
-		// Instantiating a renderer for the Pie Chart
 		final DefaultRenderer defaultRenderer  = new DefaultRenderer();
-		while(itrCl.hasNext()){
-			Random rnd = new Random(); 
-			
-			int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-			// Instantiating a render for the slice
-			final float hue = rnd.nextFloat();
-			final float saturation = 0.8f;//1.0 for brilliant, 0.0 for dull
-			final float luminance = 0.8f; //1.0 for brighter, 0.0 for black
-			float hsv [] ={hue,saturation,luminance};
-			Color.colorToHSV(color, hsv);
+		Iterator<Integer> col = ColorCombination.getColor().iterator();
+		while(itrName.hasNext())
+		{	
+			distributionSeries.add(itrName.next(),itrAmt.next());
 			SimpleSeriesRenderer seriesRenderer = new SimpleSeriesRenderer();
-			seriesRenderer.setColor(color);
-			itrCl.next();
+			seriesRenderer.setColor(col.next());
 			defaultRenderer.addSeriesRenderer(seriesRenderer);
 		}
+		// Instantiating a renderer for the Pie Chart
 
+		
 		defaultRenderer.setPanEnabled(false);
 		defaultRenderer.setDisplayValues(true);
 
@@ -219,7 +186,7 @@ public class MainAdapter extends BaseAdapter {
 		defaultRenderer.setShowLabels(true);
 		defaultRenderer.setLegendTextSize(20);
 		defaultRenderer.setLabelsTextSize(20);
-		
+
 		final GraphicalView mChart = ChartFactory.getPieChartView(mContext, distributionSeries, defaultRenderer);
 		mChart.setOnClickListener(new View.OnClickListener() { 
 			@Override
@@ -228,7 +195,7 @@ public class MainAdapter extends BaseAdapter {
 				if (seriesSelection == null) {
 
 				} else {
-					
+
 					Toast.makeText( aa, "" + cardName.get(seriesSelection.getPointIndex()) + "  " + " Amount " + seriesSelection.getValue()+"\u20B9", Toast.LENGTH_SHORT).show();
 				}
 			}
