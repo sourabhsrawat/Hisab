@@ -130,7 +130,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		md.setMnt(CfgDate.getMonthInWrd());
 		//md.setYear(CfgDate.getEndYear());
 		GetData data = new GetData(CfgDate,this.getContentResolver());
-		int total = data.getTotal();
+		int total=0;
+		try
+		{
+		 total = data.getTotal();
+		}
+		catch(NullPointerException e)
+		{
+			Log.w("Catch", "Catch excption");
+		}
 		md.setCheck(total);
 		md.setResult(total+"");
 		md.setCardAmt(data.getCardAmt());
@@ -138,6 +146,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		//md.setVw(openChart());
 		mainListView.setAdapter(md);
 		//logWrite();
+		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -260,6 +269,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 public void logWrite()
 {
 	try {
+		
 	      Process process = Runtime.getRuntime().exec("logcat -d");
 	      BufferedReader bufferedReader = new BufferedReader(
 	      new InputStreamReader(process.getInputStream()));

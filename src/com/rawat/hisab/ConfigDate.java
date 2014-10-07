@@ -1,6 +1,6 @@
 package com.rawat.hisab;
 
-import java.util.HashMap;
+
 /*
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Logger;
@@ -20,8 +20,8 @@ public class ConfigDate extends Application {
 	private int day_Ed;
 	private int month_Ed;
 	private int year_Ed;
-	private String mnt;
-	private static final String PROPERTY_ID ="UA-55240529-1";
+
+	
 
 	public ConfigDate getInstance(){
 		return singleton;

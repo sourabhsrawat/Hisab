@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
-import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class GetData {
@@ -122,31 +121,42 @@ public class GetData {
 	{
 		int mnt = CfgDate.getEndMonth();
 		int year = CfgDate.getEndYear();
-		Uri uriSMSURI = Uri.parse("content://sms/inbox");
-		
+		//Uri uriSMSURI = Uri.parse("content://sms/inbox/");
+
 		cur = cR.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null,null);
 		Calendar cl = Calendar.getInstance();
+		/*cur.moveToFirst();
 		
-	//	SmsMessage[] smsList = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+	    //read all messages in your inbox
+		
+	        //read all data from all available columns for each message
+	        for (int i = 0; i < cur.getColumnCount(); i++)
+	        {
+	        	Log.w("*****Message***", cur.getColumnName(i) + ": " + cur.getString(i));
+	        }*/
+
+	   
+		
 		while (cur.moveToNext()) {
-			long ms= Long.parseLong(cur.getString(4));
+			long ms= Long.parseLong(cur.getString(cur.getColumnIndexOrThrow("date")));
+			
 
 			cl.setTimeInMillis(ms);
-			Log.w("msg", cur.getString(12));
+			//Log.w("msg", cur.getString(12));
 			if(cl.get(Calendar.MONTH)+1==mnt && cl.get(Calendar.YEAR) == year )
 			{
 				String msg="";
-				msg=cur.getString(12);
-				Log.w("msg", cur.getString(1));
-				if(msg.contains(CardComponent.iciciCredit_Check))
+				msg=cur.getString(cur.getColumnIndexOrThrow("body"));
+				//Log.w("msg", cur.getString(1));
+				if(msg.contains(CardIdentifier.iciciCredit_Check))
 				{
-					icicBank=getCreditAmt(CardComponent.iciciCredit_Split,msg)+icicBank;
+					icicBank=getCreditAmt(CardIdentifier.iciciCredit_Split,msg)+icicBank;
 				}	
-				else if(msg.contains(CardComponent.hdfcCredit_Check))
+				else if(msg.contains(CardIdentifier.hdfcCredit_Check))
 				{
-					hdfcCredit=getCreditAmt(CardComponent.hdfcCredit_Split,msg)+hdfcCredit;
+					hdfcCredit=getCreditAmt(CardIdentifier.hdfcCredit_Split,msg)+hdfcCredit;
 				}
-				else if(msg.contains(CardComponent.hdfcCreditSMT_Check))
+				else if(msg.contains(CardIdentifier.hdfcCreditSMT_Check))
 				{
 					//hdfcCredit=getCreditAmt(CardComponent.hdfcCreditSMT_Split,msg)+hdfcCredit;
 					String tmp2="";
@@ -154,87 +164,87 @@ public class GetData {
 					tmp2=separated[1];
 					hdfcCredit=Double.valueOf((tmp2))+hdfcCredit;
 				}
-				else if(msg.contains(CardComponent.cityAtm_Check))
+				else if(msg.contains(CardIdentifier.cityAtm_Check))
 				{
-					city=getCreditAmt(CardComponent.cityAtm_Split,msg)+city;
-					Log.w("msg", msg);
+					city=getCreditAmt(CardIdentifier.cityAtm_Split,msg)+city;
+					
 				}
-				else if(msg.contains(CardComponent.cityDebit_Check1))
+				else if(msg.contains(CardIdentifier.cityDebit_Check1))
 				{
-					if(msg.contains(CardComponent.cityDebit_Check2))
+					if(msg.contains(CardIdentifier.cityDebit_Check2))
 					{
-						city=getCreditAmt(CardComponent.cityDebit_Split,msg)+city;
-						Log.w("msg", msg);
+						city=getCreditAmt(CardIdentifier.cityDebit_Split,msg)+city;
+						
 					}
 				}
-				else if(msg.contains(CardComponent.cityCredit_Check))
+				else if(msg.contains(CardIdentifier.cityCredit_Check))
 				{
-					citiCredit=getCreditAmt(CardComponent.cityCredit_Split,msg)+citiCredit;
+					citiCredit=getCreditAmt(CardIdentifier.cityCredit_Split,msg)+citiCredit;
 				
 				}
-				else if(msg.contains(CardComponent.iciciDebit_Check1) && msg.contains(CardComponent.iciciDebit_Check2))
+				else if(msg.contains(CardIdentifier.iciciDebit_Check1) && msg.contains(CardIdentifier.iciciDebit_Check2))
 				{
 					iciciDebit(msg);
 				}
-				else if(msg.contains(CardComponent.sbiDebit_Check) || msg.contains(CardComponent.sbiDebit_Check2))
+				else if(msg.contains(CardIdentifier.sbiDebit_Check) || msg.contains(CardIdentifier.sbiDebit_Check2))
 				{
-					if(msg.contains(CardComponent.sbiDebit_in2_Check2))
+					if(msg.contains(CardIdentifier.sbiDebit_in2_Check2))
 					{
-						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_in2_Split,msg)+sbi;
+						sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_in2_Split,msg)+sbi;
 					}
-					else if(msg.contains(CardComponent.sbiDebit_in3_Check2))
+					else if(msg.contains(CardIdentifier.sbiDebit_in3_Check2))
 					{
 						String tmp2="";
 						String[] separated = msg.split("Rs");
 						tmp2=separated[1];
 						sbi=Double.valueOf((tmp2))+sbi;
 					}
-					else if(msg.contains(CardComponent.sbiDebit_Check1))
+					else if(msg.contains(CardIdentifier.sbiDebit_Check1))
 					{
-						sbi=getCreditAmt(CardComponent.sbiDebit_Check1_Split,msg)+sbi;
+						sbi=getCreditAmt(CardIdentifier.sbiDebit_Check1_Split,msg)+sbi;
 					}
-					else if (msg.contains(CardComponent.sbiDebit_Check2))
+					else if (msg.contains(CardIdentifier.sbiDebit_Check2))
 					{
-						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_Split,msg)+sbi;
+						sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_Split,msg)+sbi;
 					}
-					else if (msg.contains(CardComponent.sbiDebit_in1_Check2))
+					else if (msg.contains(CardIdentifier.sbiDebit_in1_Check2))
 					{
-						sbi=getCreditAmt(CardComponent.sbiDebit_Check2_Split,msg)+sbi;
+						sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_Split,msg)+sbi;
 					}
 				}
-				else if(msg.contains(CardComponent.iciciDebitPurchase_Check) || msg.contains(CardComponent.iciciDebit_Check3))
+				else if(msg.contains(CardIdentifier.iciciDebitPurchase_Check) || msg.contains(CardIdentifier.iciciDebit_Check3))
 				{
 					iciciDebit(msg);
 				}
-				else if(msg.contains(CardComponent.sbiDebitIB_Check))
+				else if(msg.contains(CardIdentifier.sbiDebitIB_Check))
 				{
-					sbi=getCreditAmt(CardComponent.sbiDebitIB_Check_Split,msg)+sbi;
+					sbi=getCreditAmt(CardIdentifier.sbiDebitIB_Check_Split,msg)+sbi;
 				}
-				else if(msg.contains(CardComponent.amex_Check1)&&msg.contains(CardComponent.amex_Check2)) 
+				else if(msg.contains(CardIdentifier.amex_Check1)&&msg.contains(CardIdentifier.amex_Check2)) 
 				{
-					amex=getCreditAmt(CardComponent.amex_Split,msg);
+					amex=getCreditAmt(CardIdentifier.amex_Split,msg);
 				}
-				else if(msg.contains(CardComponent.hdfcDebit_Check))
+				else if(msg.contains(CardIdentifier.hdfcDebit_Check))
 				{
-					hdfcDebit= getCreditAmt(CardComponent.hdfcDedit_Split,msg)+hdfcDebit;
+					hdfcDebit= getCreditAmt(CardIdentifier.hdfcDedit_Split,msg)+hdfcDebit;
 				}
-				else if(msg.contains(CardComponent.stanChartCredit_Check1))
+				else if(msg.contains(CardIdentifier.stanChartCredit_Check1))
 				{
-					if(msg.contains(CardComponent.stanChartCredit_Check2))
+					if(msg.contains(CardIdentifier.stanChartCredit_Check2))
 					{
-						stanChart=getCreditAmt(CardComponent.stanChartCredit_Split2,msg)+stanChart;
+						stanChart=getCreditAmt(CardIdentifier.stanChartCredit_Split2,msg)+stanChart;
 					}
 					else{
-						stanChart=getCreditAmt(CardComponent.stanChartCredit_Split1,msg)+stanChart;
+						stanChart=getCreditAmt(CardIdentifier.stanChartCredit_Split1,msg)+stanChart;
 					}
 				}
-				else if (msg.contains(CardComponent.kotakDebit_Check))
+				else if (msg.contains(CardIdentifier.kotakDebit_Check))
 				{
-					kotakDebit=getCreditAmt(CardComponent.kotakDebit_Split,msg)+kotakDebit;
+					kotakDebit=getCreditAmt(CardIdentifier.kotakDebit_Split,msg)+kotakDebit;
 				}
-				else if (msg.contains(CardComponent.bob_Check))
+				else if (msg.contains(CardIdentifier.bob_Check))
 				{
-					bob=getCreditAmt(CardComponent.bob_Split,msg)+bob;
+					bob=getCreditAmt(CardIdentifier.bob_Split,msg)+bob;
 				}
 			}
 		}
@@ -244,28 +254,29 @@ public class GetData {
 		cn=getCount();
 		int d = (int) Math.ceil(total);
 		//total=d;
+		 cur.close();
 		return d;
 	}
 
 	public void iciciDebit(String tmp1)
 	{
-		if(tmp1.contains(CardComponent.iciciDebitPurchase_Check))
+		if(tmp1.contains(CardIdentifier.iciciDebitPurchase_Check))
 		{
-			iciciDB=getCreditAmt(CardComponent.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
+			iciciDB=getCreditAmt(CardIdentifier.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
 		}
-		else if(tmp1.contains(CardComponent.iciciDebit_Check1) && tmp1.contains(CardComponent.iciciDebit_Check2))
+		else if(tmp1.contains(CardIdentifier.iciciDebit_Check1) && tmp1.contains(CardIdentifier.iciciDebit_Check2))
 		{
-			iciciDB=getCreditAmt(CardComponent.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
+			iciciDB=getCreditAmt(CardIdentifier.iciciDebit_Purchase_Check1_Check2_Split,tmp1)+iciciDB;
 		}
-		else if (tmp1.contains(CardComponent.iciciDebit_in_Check))
+		else if (tmp1.contains(CardIdentifier.iciciDebit_in_Check))
 		{
-			if(tmp1.contains(CardComponent.iciciDebit_in1_Check))
+			if(tmp1.contains(CardIdentifier.iciciDebit_in1_Check))
 			{
-				iciciDB=getCreditAmt(CardComponent.iciciDebit_in1_Split,tmp1)+iciciDB;
+				iciciDB=getCreditAmt(CardIdentifier.iciciDebit_in1_Split,tmp1)+iciciDB;
 			}
-			if(tmp1.contains(CardComponent.iciciDebit_in2_Check))
+			if(tmp1.contains(CardIdentifier.iciciDebit_in2_Check))
 			{
-				iciciDB=getCreditAmt(CardComponent.iciciDebit_in2_Split,tmp1)+iciciDB;
+				iciciDB=getCreditAmt(CardIdentifier.iciciDebit_in2_Split,tmp1)+iciciDB;
 			}
 		}
 		//Log.w("ICICI Bank", tmp2+"");
