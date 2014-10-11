@@ -1,6 +1,6 @@
 package com.rawat.hisab;
 
-public interface CardComponent {
+public interface CardIdentifier {
 
 	//Values for all check for all credit cards in if else 
 	public static final String iciciCredit_Check = "Tranx of INR";

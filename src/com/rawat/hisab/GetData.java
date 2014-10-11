@@ -222,7 +222,7 @@ public class GetData {
 				}
 				else if(msg.contains(CardIdentifier.amex_Check1)&&msg.contains(CardIdentifier.amex_Check2)) 
 				{
-					amex=getCreditAmt(CardIdentifier.amex_Split,msg);
+					amex=getCreditAmt(CardIdentifier.amex_Split,msg)+amex;
 				}
 				else if(msg.contains(CardIdentifier.hdfcDebit_Check))
 				{

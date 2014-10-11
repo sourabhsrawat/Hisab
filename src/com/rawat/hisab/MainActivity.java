@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		//String defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(getBaseContext());
 		
-		//Log.w("APP",defaultSmsApp );
+		
 		CfgDate = (ConfigDate) getApplication();
 		if(CfgDate.getEndMonth() == 0)
 		{
