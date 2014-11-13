@@ -1,0 +1,27 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">NOTIFICATION</string>
+    <string name="pref_title_Total">Set Maximum Total Limit</string>
+    <string name="pref_title_Card">Set Maximum Individual Card Limit</string>
+    <string name="pref_default_Total_Max">50000</string>
+    <string name="pref_default_Card_Max">10000</string>
+    
+
+    <!-- About US -->
+    <string name="pref_header_About">About US</string>
+    
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_title_new_message_notifications">Enable notifications</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+
+</resources>

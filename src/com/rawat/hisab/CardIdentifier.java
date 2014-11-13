@@ -7,6 +7,7 @@ public interface CardIdentifier {
 	public static final String hdfcCredit_Check = "HDFCBank CREDIT Card";
 	public static final String hdfcCreditSMT_Check = "HDFC Bank credit card to pay your SMARTPAY";
 	public static final String cityAtm_Check = "Citibank ATM";
+	public static final String cityAtm_Check1="withdrawn";
 	public static final String cityDebit_Check1="Your debit card";
 	public static final String cityDebit_Check2="make a purchase";
 	public static final String cityCredit_Check="was spent on your Credit Card";
@@ -31,7 +32,7 @@ public interface CardIdentifier {
 	public static final String iciciDebit_in2_Check = "NFS";
 	public static final String kotakDebit_Check="Kotak Debit card";
 	public static final String bob_Check="is Debited to";
-
+	public static final String sbi_credit_Check="SBI Credit card";
 
 	
 	//Arrays for splitting SMS
@@ -40,6 +41,7 @@ public interface CardIdentifier {
 	public static final String[] hdfcCreditSMT_Split = {"Rs."};
 	public static final String[] hdfcDedit_Split = {"Rs.","towards"};
 	public static final String[] cityAtm_Split = {"Rs.","was"};
+	public static final String[] cityAtm2_Split = {"Rs.","withdrawn"};
 	public static final String[] cityDebit_Split={"Rs.","on"};
 	public static final String[] cityCredit_Split={"Rs","was"};
 	public static final String[] iciciDebit_Purchase_Check1_Check2_Split = {"INR","on"};
@@ -56,6 +58,7 @@ public interface CardIdentifier {
 	public static final String[] stanChartCredit_Split2 = {"INR",". Call"};
 	public static final String[] kotakDebit_Split={"of Rs.","made"};
 	public static final String[] bob_Split={"Rs.", "is"};
+	public static final String[] sbi_Credit_Split={"Rs.","made"};
 
 
 }

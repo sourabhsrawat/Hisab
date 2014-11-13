@@ -29,6 +29,7 @@ public class GetData {
 	private double kotakDebit=0;
 	private double bob=0;
 	private double citiCredit=0;
+	private double sbiCredit=0;
 
 
 	public static int count=0;
@@ -103,15 +104,19 @@ public class GetData {
 		{
 			setParm(citiCredit,"Citi Credit");
 		}
+		if(sbiCredit > 0)
+		{
+			setParm(sbiCredit,"SBI Credit Card");
+		}
 
 		return count;
 	}
 	private void setParm(double cardAmt, String cName)
 	{
 		BigDecimal bd = new BigDecimal(Double.toString(cardAmt));
-	    bd = bd.setScale(2, BigDecimal.ROUND_UP);
-	    cardAmt=bd.doubleValue();
-	    
+		bd = bd.setScale(2, BigDecimal.ROUND_UP);
+		cardAmt=bd.doubleValue();
+
 		amt.add(cardAmt);
 		cardName.add(cName);
 		//percent.add((cardAmt/total)*100);
@@ -126,20 +131,20 @@ public class GetData {
 		cur = cR.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null,null);
 		Calendar cl = Calendar.getInstance();
 		/*cur.moveToFirst();
-		
+
 	    //read all messages in your inbox
-		
+
 	        //read all data from all available columns for each message
 	        for (int i = 0; i < cur.getColumnCount(); i++)
 	        {
 	        	Log.w("*****Message***", cur.getColumnName(i) + ": " + cur.getString(i));
 	        }*/
 
-	   
-		
+
+
 		while (cur.moveToNext()) {
 			long ms= Long.parseLong(cur.getString(cur.getColumnIndexOrThrow("date")));
-			
+
 
 			cl.setTimeInMillis(ms);
 			//Log.w("msg", cur.getString(12));
@@ -164,23 +169,26 @@ public class GetData {
 					tmp2=separated[1];
 					hdfcCredit=Double.valueOf((tmp2))+hdfcCredit;
 				}
-				else if(msg.contains(CardIdentifier.cityAtm_Check))
+				else if(msg.contains(CardIdentifier.cityAtm_Check) || msg.contains(CardIdentifier.cityAtm_Check1))
 				{
-					city=getCreditAmt(CardIdentifier.cityAtm_Split,msg)+city;
-					
+					if(msg.contains("was"))
+						city=getCreditAmt(CardIdentifier.cityAtm_Split,msg)+city;
+					else
+						city=getCreditAmt(CardIdentifier.cityAtm2_Split,msg)+city;
+
 				}
 				else if(msg.contains(CardIdentifier.cityDebit_Check1))
 				{
 					if(msg.contains(CardIdentifier.cityDebit_Check2))
 					{
 						city=getCreditAmt(CardIdentifier.cityDebit_Split,msg)+city;
-						
+
 					}
 				}
 				else if(msg.contains(CardIdentifier.cityCredit_Check))
 				{
 					citiCredit=getCreditAmt(CardIdentifier.cityCredit_Split,msg)+citiCredit;
-				
+
 				}
 				else if(msg.contains(CardIdentifier.iciciDebit_Check1) && msg.contains(CardIdentifier.iciciDebit_Check2))
 				{
@@ -246,15 +254,19 @@ public class GetData {
 				{
 					bob=getCreditAmt(CardIdentifier.bob_Split,msg)+bob;
 				}
+				else if(msg.contains(CardIdentifier.sbi_credit_Check))
+				{
+					sbiCredit=getCreditAmt(CardIdentifier.sbi_Credit_Split,msg)+sbiCredit;
+				}
 			}
 		}
 		//sms=sms+"Total "+ total +"";
-		total=icicBank+hdfcCredit+city+iciciDB+sbi+kotakDebit+bob+amex+hdfcDebit+stanChart+citiCredit;
-		
+		total=icicBank+hdfcCredit+city+iciciDB+sbi+kotakDebit+bob+amex+hdfcDebit+stanChart+citiCredit+sbiCredit;
+
 		cn=getCount();
 		int d = (int) Math.ceil(total);
 		//total=d;
-		 cur.close();
+		cur.close();
 		return d;
 	}
 
@@ -290,9 +302,9 @@ public class GetData {
 		{
 			--ln;
 			try{
-			String[] separated = tmp1.split(str[i]);
-			tmp1=separated[ln];
-			i++;
+				String[] separated = tmp1.split(str[i]);
+				tmp1=separated[ln];
+				i++;
 			}
 			catch(ArrayIndexOutOfBoundsException e)
 			{
@@ -307,7 +319,7 @@ public class GetData {
 		{
 			Log.w("NumberFormatException",e.getMessage());
 		}
-	   
+
 		return amt;
 	}
 
@@ -319,5 +331,5 @@ public class GetData {
 	{
 		return cardName;
 	}
-	
+
 }

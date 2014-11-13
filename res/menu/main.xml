@@ -20,5 +20,14 @@
         android:layout_gravity="right"
         android:title="@string/action_settings"
         app:showAsAction="always"/>
+    
+    <item
+        android:id="@+id/action_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/action_set"
+        app:showAsAction="always"/>
 
 </menu>

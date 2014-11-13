@@ -14,6 +14,7 @@ import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -114,6 +115,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 			return true;
 		case R.id.action_settings:
 			openSearch();
+			return true;
+		case R.id.action_set:
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
