@@ -9,6 +9,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+
+import com.rawat.hisab.DB.CardDetails;
+import com.rawat.hisab.DB.HisabDataSource;
 
 
 import android.app.DatePickerDialog;
@@ -53,6 +58,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	private int mYear;
 	private int mMonth;
 	private int mDay;
+	private Notification nf;
+	private HisabDataSource hds;
 	
 
 	@Override
@@ -66,8 +73,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		ActionBar actionBar = getSupportActionBar(); 
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		//String defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(getBaseContext());
-		
-		
+		//this.deleteDatabase("hisab.db");
+		hds = new HisabDataSource(this);
+		hds.open();
+		//Notification
+		nf = new Notification(this);
 		CfgDate = (ConfigDate) getApplication();
 		if(CfgDate.getEndMonth() == 0)
 		{
@@ -78,8 +88,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 			CfgDate.setEndMonth(mn+1);
 		}
 		//openChart();
-		openRefresh();
+		Log.w("Card ", "Details");
+		/*List<CardDetails> cd =hds.getAllCardDeatils();
+		Iterator<CardDetails> itr = cd.iterator();
+		itr.hasNext();*/
+		hds.selectData();
+		//hds.updateCardData();
+		Log.w("Database", "After select");
 
+		openRefresh();
+		
 	}
 
 	@Override
@@ -130,6 +148,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		/*Tracker t = ((ConfigDate) getApplication()).getTracker(TrackerName.APP_TRACKER);
 		t.setScreenName("MainActivity");
 		t.send(new HitBuilders.AppViewBuilder().build());*/
+		nf.displayNotification();
 		CfgDate = (ConfigDate) getApplication();
 		md= new MainAdapter(this,this);
 		md.setMnt(CfgDate.getMonthInWrd());
@@ -151,6 +170,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		//md.setVw(openChart());
 		mainListView.setAdapter(md);
 		//logWrite();
+		hds.close();
 		
 	}
 

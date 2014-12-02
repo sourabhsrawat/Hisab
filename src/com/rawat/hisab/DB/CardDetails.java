@@ -2,11 +2,22 @@ package com.rawat.hisab.DB;
 
 public class CardDetails {
 	
+	private long msgtimeStamp;
 	private int id;
-	private String name;
-	private int amt;
+	private double amt;
 	private String mnt;
 	private int yr;
+	private String at;
+	
+	public double getMsgtimeStamp()
+	{
+		return msgtimeStamp;
+	}
+	
+	public void setMsgtimeStamp(long msgtimeStamp)
+	{
+		this.msgtimeStamp=msgtimeStamp;
+	}
 	
 	public int getID()
 	{
@@ -18,26 +29,23 @@ public class CardDetails {
 		this.id=id;
 	}
 	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public void setName(String name)
-	{
-		this.name=name;
-	}
-	
-	public int getAmt()
+	public double getAmt()
 	{
 		return amt;
 	}
 	
-	public void setAmt(int amt)
+	public void setAmt(double amt)
 	{
 		this.amt=amt;
 	}
-	
+	public void setAt(String at)
+	{
+		this.at=at;
+	}
+	public String getAt()
+	{
+		return at;
+	}
 	public String getMnt()
 	{
 		return mnt;

@@ -1080,9 +1080,13 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_action_refresh=0x7f020057;
-        public static final int ic_action_search=0x7f020058;
-        public static final int ic_launcher=0x7f020059;
+        public static final int hisab=0x7f020057;
+        public static final int ic_action_refresh=0x7f020058;
+        public static final int ic_action_search=0x7f020059;
+        public static final int ic_action_settings=0x7f02005a;
+        public static final int ic_launcher=0x7f02005b;
+        public static final int sr=0x7f02005c;
+        public static final int sr1=0x7f02005d;
     }
     public static final class id {
         public static final int action_bar=0x7f06001c;
@@ -1097,6 +1101,7 @@ containing a value of this type.
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
         public static final int action_refresh=0x7f060041;
+        public static final int action_set=0x7f060043;
         public static final int action_settings=0x7f060042;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
@@ -1214,7 +1219,7 @@ containing a value of this type.
         public static final int main=0x7f0e0000;
     }
     public static final class string {
-        public static final int Rp=0x7f0b0019;
+        public static final int Rp=0x7f0b001a;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abc_action_bar_home_description=0x7f0b0001;
@@ -1257,16 +1262,36 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
         public static final int action_refresh=0x7f0b0013;
         public static final int action_search=0x7f0b0011;
+        public static final int action_set=0x7f0b0014;
         public static final int action_settings=0x7f0b000f;
         public static final int app_name=0x7f0b000d;
         public static final int button_show=0x7f0b0010;
-        public static final int config_endate=0x7f0b0017;
-        public static final int config_selectdate=0x7f0b0015;
-        public static final int config_stdate=0x7f0b0016;
-        public static final int date_title=0x7f0b0018;
+        public static final int config_endate=0x7f0b0018;
+        public static final int config_selectdate=0x7f0b0016;
+        public static final int config_stdate=0x7f0b0017;
+        public static final int date_title=0x7f0b0019;
         public static final int hello_world=0x7f0b000e;
-        public static final int title_activity_config=0x7f0b0014;
+        public static final int pref_default_Card_Max=0x7f0b0020;
+        public static final int pref_default_Total_Max=0x7f0b001f;
+        /**  About US 
+         */
+        public static final int pref_header_About=0x7f0b0021;
+        /**  Strings related to Settings 
+ Example General settings 
+         */
+        public static final int pref_header_general=0x7f0b001c;
+        /**  Example settings for Notifications 
+         */
+        public static final int pref_header_notifications=0x7f0b0022;
+        public static final int pref_ringtone_silent=0x7f0b0025;
+        public static final int pref_title_Card=0x7f0b001e;
+        public static final int pref_title_Total=0x7f0b001d;
+        public static final int pref_title_new_message_notifications=0x7f0b0023;
+        public static final int pref_title_ringtone=0x7f0b0024;
+        public static final int pref_title_vibrate=0x7f0b0026;
+        public static final int title_activity_config=0x7f0b0015;
         public static final int title_activity_display=0x7f0b0012;
+        public static final int title_activity_settings=0x7f0b001b;
     }
     public static final class style {
         /** 
@@ -1502,6 +1527,10 @@ containing a value of this type.
         public static final int app_tracker=0x7f050000;
         public static final int ecommerce_tracker=0x7f050001;
         public static final int global_tracker=0x7f050002;
+        public static final int pref_data_sync=0x7f050003;
+        public static final int pref_general=0x7f050004;
+        public static final int pref_headers=0x7f050005;
+        public static final int pref_notification=0x7f050006;
     }
     public static final class styleable {
         /**  ============================================ 
