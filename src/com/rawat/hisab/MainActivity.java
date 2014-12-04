@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 /*
 import com.google.android.gms.analytics.HitBuilders;
@@ -95,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		hds.selectData();
 		//hds.updateCardData();
 		Log.w("Database", "After select");
-
+		hds.close();
 		openRefresh();
 		
 	}
@@ -163,6 +164,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		{
 			Log.w("Catch", "Catch excption");
 		}
+		hds.open();
+		hds.getCardTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
+		hds.getTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
 		md.setCheck(total);
 		md.setResult(total+"");
 		md.setCardAmt(data.getCardAmt());
@@ -243,34 +247,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 
 	}
 	private DatePickerDialog customDatePicker() {
-		DatePickerDialog dpd = new DatePickerDialog(this, mDateSetListner,
-				mYear, mMonth, mDay);
-		try {
+		final Calendar c = Calendar.getInstance();
 
-			Field[] datePickerDialogFields = dpd.getClass().getDeclaredFields();
-			for (Field datePickerDialogField : datePickerDialogFields) {
-				if (datePickerDialogField.getName().equals("mDatePicker")) {
-					datePickerDialogField.setAccessible(true);
-					DatePicker datePicker = (DatePicker) datePickerDialogField
-							.get(dpd);
-					Field datePickerFields[] = datePickerDialogField.getType()
-							.getDeclaredFields();
-					for (Field datePickerField : datePickerFields) {
-						if ("mDayPicker".equals(datePickerField.getName())
-								|| "mDaySpinner".equals(datePickerField
-										.getName())) {
-							datePickerField.setAccessible(true);
-							Object dayPicker = new Object();
-							dayPicker = datePickerField.get(datePicker);
-							((View) dayPicker).setVisibility(View.GONE);
-						}
-					}
-				}
+        DatePickerDialog dialog = new DatePickerDialog(this, mDateSetListner, c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 
-			}
-		} catch (Exception ex) {
-		}
-		return dpd;
+        dialog.getDatePicker().setSpinnersShown(true);
+
+        // hiding calendarview and daySpinner in datePicker
+           dialog.getDatePicker().setCalendarViewShown(false);
+
+            LinearLayout pickerParentLayout = (LinearLayout) dialog.getDatePicker().getChildAt(0);
+
+            LinearLayout pickerSpinnersHolder = (LinearLayout) pickerParentLayout.getChildAt(0);
+
+            pickerSpinnersHolder.getChildAt(1).setVisibility(View.GONE);
+
+
+        //dialog.setTitle("Pick a date");
+        return dialog;
 	}
 
 

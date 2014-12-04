@@ -21,6 +21,9 @@ public class HisabDataSource {
 	String mnt="NOVEMBER";
 	String yr="14";
 	Context ct;
+	private List<Double> amt;
+	private List<String> cardName;
+	
 	private String[] allTable1Columns = { DBConst.Table1_Column1,DBConst.Table1_Column2,
 			DBConst.Table1_Column3,DBConst.Table1_Column4,DBConst.Table1_Column5,DBConst.Table1_Column6};
 	private String[] allTable6Columns= {DBConst.Table6_Column1};
@@ -29,6 +32,9 @@ public class HisabDataSource {
 	public HisabDataSource(Context context) {
 		ct=context;
 		dbHelper = new MySQLiteHelper(context);
+		amt = new ArrayList<Double>();
+		cardName=new ArrayList<String>();
+
 	}
 
 	public void open() throws SQLException {
@@ -38,11 +44,11 @@ public class HisabDataSource {
 	public void close() {
 		dbHelper.close();
 	}
-	
+
 	public void selectData()
 	{
 		Cursor cr = database.query(DBConst.Table1_Name,null,DBConst.Table1_Column5+" =?  AND "
-					+ DBConst.Table1_Column6 + " =? ", new String[]{"DECEMBER ",String.valueOf(2014)}, null, null, null);
+				+ DBConst.Table1_Column6 + " =? ", new String[]{"DECEMBER ",String.valueOf(2014)}, null, null, null);
 		//Cursor cr = database.query(DBConst.Table1_Name, null, null, null, null, null, null);
 		Log.w("In Select", cr.equals(null)+"");
 		while(cr.moveToNext())
@@ -70,21 +76,21 @@ public class HisabDataSource {
 		{
 			Log.w("Last sync check", cr1.getLong(0)+"");
 		}*/
-		
+
 		Log.w("Last sy", lastSync+"");
 		Cursor crls = database.query(DBConst.Table1_Name, null, DBConst.Table1_Column1 + " <= ? ", 
 				new String[]{String.valueOf(lastSync)}, null, null, null);
 		Log.w("Check count", crls.getCount()+"");
-		
+
 	}
-	
+
 	public void updateCardData(String msg,long ms)
 	{
 		UpdateCardData uCD= new UpdateCardData(database, ct);
 		uCD.updateCardDetails(msg,ms);
 
 	}
-	
+
 	public List<CardDetails> getAllCardDeatils()
 	{
 		Log.w("Select", "INS");
@@ -137,23 +143,45 @@ public class HisabDataSource {
 					+ " where " + DBConst.Table6_Name +"="+ lastSync);
 		}
 	}
-	public int getCardTotal(int cardID)
+	public int getCardTotal(String mnt, int yr)
 	{
 		int total=0;
 		String [] str = new String[]{DBConst.Table3_Column4};
-		Cursor cursor=database.query(DBConst.Table3_Name,str, DBConst.Table3_Column1 +" = ? ", new String[] {cardID+""},
-				null, null, null);
-		cursor.moveToNext();
-		total= cursor.getInt(0);
+		Cursor crCardID = database.query(true,DBConst.Table1_Name,new String[]{DBConst.Table1_Column2}, 
+										 DBConst.Table1_Column5 +"=?"+" AND "+ DBConst.Table1_Column6 
+										 +"=?", new String[]{mnt,yr+""}, null, null, null,null,null);
+		while(crCardID.moveToNext())
+		{
+			int cardID = crCardID.getInt(0);
+			Cursor cursor=database.query(DBConst.Table3_Name,str, DBConst.Table3_Column1 +" =? AND "+
+					DBConst.Table3_Column2 +"=? AND " + DBConst.Table3_Column3 + " =? ",
+					new String[] {cardID+"",mnt,yr+""},
+					null, null, null);
+			cursor.moveToNext();
+			Cursor crCardName = database.query(DBConst.Table4_Name, new String[]{DBConst.Table4_Column2},
+												DBConst.Table4_Column1+"=?  ", new String[]{cardID+""}
+												, null, null, null);
+			crCardName.moveToNext();
+			String cardName = new String(crCardName.getString(0));
+			cardName=cardName.replace('_', ' ');
+			Log.w("Data", "Name " + cardName +" MNT " + mnt + "YR " +yr+" AMT" + cursor.getInt(0));
+			total= cursor.getInt(0);
+			crCardName.close();
+			cursor.close();
+		}
+		crCardID.close();
 		return total;
 	}
 	public int getTotal(String mnt, int yr)
 	{
 		int total=0;
 		String [] str = new String[]{DBConst.Table5_Column3};
-		Cursor cursor = database.query(DBConst.Table5_Name, str, DBConst.Table5_Column1+" = ?"+DBConst.Table5_Column2 + " = ? ", 
+		Cursor cursor = database.query(DBConst.Table5_Name, str, DBConst.Table5_Column1+" = ? AND "+DBConst.Table5_Column2 + " = ? ", 
 				new String[]{mnt,yr+""}, null, null, null);
 		cursor.moveToNext();
+		total = cursor.getInt(0);
+		Log.w("Total",""+total);
+		cursor.close();
 		return total;
 	}
 }

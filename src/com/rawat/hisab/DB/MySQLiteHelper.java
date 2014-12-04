@@ -26,7 +26,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 			+ DBConst.Table3_Column3 + " INTEGER, "+ DBConst.Table3_Column4 + " INTEGER " +" )";
 
 	private static final String CREATE_TABLE4="CREATE TABLE " + DBConst.Table4_Name + " ( " + DBConst.Table4_Column1 + 
-			" TEXT PRIMARY KEY, " + DBConst.Table4_Column2 + " TEXT " + " )";
+			" INTEGER PRIMARY KEY, " + DBConst.Table4_Column2 + " TEXT " + " )";
 
 	private static final String CREATE_TABLE5="CREATE TABLE "+DBConst.Table5_Name + " ( " + DBConst.Table5_Column1 + 
 			" TEXT ," + DBConst.Table5_Column2 + " INTEGER," 

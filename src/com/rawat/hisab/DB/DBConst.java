@@ -34,7 +34,7 @@ public interface DBConst {
 	public static final String Table4_Column2="Card_Name";
 
 	//Table Five
-	public static final String Table5_Name="Mnt_Total";
+	public static final String Table5_Name="Total";
 	public static final String Table5_Column1="Card_Mnt";
 	public static final String Table5_Column2="Card_Yr";
 	public static final String Table5_Column3="Mnt_Total";
