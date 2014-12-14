@@ -2,6 +2,8 @@ package com.rawat.hisab.DB;
 
 
 
+
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -47,6 +49,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase database) {
 	
 		//Create all the databases 
+		try{
 		database.execSQL(CREATE_TABLE1);
 		database.execSQL(CREATE_TABLE2);
 		database.execSQL(CREATE_TABLE3);
@@ -66,7 +69,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 	
 		hds.fisrtInsert();
 		Log.w("Database inserted", "DB");
-		
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in Create Data ", e.getMessage());
+		}
 		
 	}
 

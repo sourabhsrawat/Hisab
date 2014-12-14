@@ -9,7 +9,7 @@ public class CardDetails {
 	private int yr;
 	private String at;
 	
-	public double getMsgtimeStamp()
+	public long getMsgtimeStamp()
 	{
 		return msgtimeStamp;
 	}

@@ -2,6 +2,7 @@ package com.rawat.hisab;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -31,6 +33,8 @@ import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 import java.util.List;
+
+import com.rawat.hisab.DB.HisabDataSource;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -52,12 +56,17 @@ public class SettingsActivity extends PreferenceActivity {
 	 */
 	static Context mContext ;
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
+	private static Notification nf;
+	private static Activity ac;
+	private static ConfigDate CfgDate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setupActionBar();
 		mContext=this;
+		ac=this;
+
 	}
 
 	/**
@@ -130,11 +139,13 @@ public class SettingsActivity extends PreferenceActivity {
 		bindPreferenceSummaryToValue(findPreference("Set_Total_Max"));
 		bindPreferenceSummaryToValue(findPreference("Set_Card_Max"));
 		//bindPreferenceSummaryToValue(findPreference("example_list"));
-		bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
-		bindPreferenceSummaryToValue(findPreference("about"));
+		//bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+		bindPreferenceSummaryToValue(findPreference("share"));
 		bindPreferenceSummaryToValue(findPreference("rate"));
-		Preference pref = findPreference("rate");
-		ButtonClick(pref);
+		Preference prefRate = findPreference("rate");
+		ButtonClick(prefRate);
+		Preference prefshare = findPreference("share");
+		ButtonShare(prefshare);
 	}
 
 	/** {@inheritDoc} */
@@ -194,16 +205,44 @@ public class SettingsActivity extends PreferenceActivity {
 						: null);
 
 			} 
+
+			if(preference instanceof CheckBoxPreference)
+			{
+				Log.w("Check", stringValue);
+			}
 			if(preference instanceof EditTextPreference)
 			{
+				nf = new Notification(ac);
+				CfgDate = (ConfigDate) ac.getApplication();
+				HisabDataSource hdc = new HisabDataSource(mContext);
 				preference.setSummary(stringValue);
 				if(preference.getKey().equals("Set_Total_Max"))
 				{
 					Log.w("Total",stringValue);
+
+					hdc.open();
+					hdc.setSettingTotalLmt(stringValue);
+					Log.w("Changed Total lmt",hdc.getSettingTotalLmt()+"");
+					if(hdc.checkTotalLmt(stringValue, CfgDate.getMonthInWrd(), CfgDate.getEndYear()))
+					{
+						nf.displayNotification("Total",1);
+						Log.w("Limit", "Total");
+					}
+					hdc.close();
 				}
 				if(preference.getKey().equals("Set_Card_Max"))
 				{
 					Log.w("Card",stringValue);
+					hdc.open();
+					hdc.setSettingInvCardLmt(stringValue);
+					Log.w("Changed Inv Lmt",hdc.getSettingInvCardLmt()+"");
+					if(hdc.checkIndLmt(stringValue, CfgDate.getMonthInWrd(), CfgDate.getEndYear()))
+					{
+
+						nf.displayNotification("individual card",2);
+						Log.w("Limit", "IND");
+					}
+					hdc.close();
 				}
 			}
 			else if (preference instanceof RingtonePreference) {
@@ -300,7 +339,7 @@ public class SettingsActivity extends PreferenceActivity {
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+			//bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
 		}
 	}
 
@@ -373,7 +412,7 @@ public class SettingsActivity extends PreferenceActivity {
 			// to their values. When their values change, their summaries are
 			// updated to reflect the new value, per the Android Design
 			// guidelines.
-			bindPreferenceSummaryToValue(findPreference("about"));
+			bindPreferenceSummaryToValue(findPreference("share"));
 			bindPreferenceSummaryToValue(findPreference("rate"));
 
 		}
@@ -395,5 +434,28 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 		editor.commit();
 	}
+	public void ButtonShare(Preference prf)
+	{
+		final String APP_PNAME = "com.rawat.hisab";
+		
+		if (prf != null) {
+			prf.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+				@Override
+				public boolean onPreferenceClick(Preference arg0) {
+					Intent share = new Intent(Intent.ACTION_SEND);
+					share.setType("text/plain");
+					String txt="Hisab on my mobile - I just discovered the Hisab App! It's a great App. " +
+							    "Download it here https://play.google.com/store/apps/details?id=com.rawat.hisab";
+					share.putExtra(Intent.EXTRA_TEXT, txt);
+					startActivity(Intent.createChooser(share, "Share Text"));
+
+					return true;
+				}
+			});     
+		}
+		
+	}
+
 
 }

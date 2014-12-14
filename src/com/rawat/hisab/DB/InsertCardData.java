@@ -1,7 +1,6 @@
 package com.rawat.hisab.DB;
 
-import java.util.Calendar;
-import java.util.Date;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class InsertCardData {
 
@@ -22,19 +22,25 @@ public class InsertCardData {
 		this.database=database;
 		this.ct=ct;
 	}
-	public void fisrtInsert()
+	public void fisrtInsert() 
 	{
-		//Insert card ID and Name
-		insertCardIDName();
-		//Insert all card details into Card detail table
-		insertCardDeatils();
-		insertCardMontlyData();
-		insertMntTotal();
-		//Insert Default settings 
-		insertSetting();
-		insertSyncTime();
+		try{
+			//Insert card ID and Name
+			insertCardIDName();
+			//Insert all card details into Card detail table
+			insertCardDeatils();
+			insertCardMontlyData();
+			insertMntTotal();
+			//Insert Default settings 
+			insertSetting();
+			insertSyncTime();
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in insert ", e.getMessage());
+		}
 	}
-	private void insertCardIDName()
+	private void insertCardIDName() throws Exception 
 	{
 		int count = DBConst.card.length;
 		for(int i =0 ;i <count;i++)
@@ -42,7 +48,7 @@ public class InsertCardData {
 			database.execSQL("Insert into "+DBConst.Table4_Name+" ( "+DBConst.Table4_Column1+" , "+DBConst.Table4_Column2 +") values ( '"+DBConst.card[i][0]+"','"+DBConst.card[i][1] +"' )" );
 		}
 	}
-	private void insertCardDeatils()
+	private void insertCardDeatils() throws Exception 
 	{
 		CardDataProvider cdp = new CardDataProvider(ct);
 		List<CardDetails> cdls = cdp.getSMS();
@@ -57,7 +63,7 @@ public class InsertCardData {
 			while(itr.hasNext())
 			{
 				CardDetails cd=itr.next();
-				//Log.w("Mnt", cd.getMnt());
+
 				ContentValues cv = new ContentValues(6);
 				cv.put(DBConst.Table1_Column1, cd.getMsgtimeStamp());
 				cv.put(DBConst.Table1_Column2, cd.getID());
@@ -66,12 +72,12 @@ public class InsertCardData {
 				cv.put(DBConst.Table1_Column5, cd.getMnt());
 				cv.put(DBConst.Table1_Column6, cd.getYr());
 				database.insert(DBConst.Table1_Name, null, cv);
-				
+
 			}
 		}
 	}
 
-	private void insertCardMontlyData()
+	private void insertCardMontlyData() throws Exception 
 	{
 		if(!isEmpty)
 		{
@@ -102,7 +108,7 @@ public class InsertCardData {
 			}
 		}
 	}
-	private void insertMntTotal()
+	private void insertMntTotal() throws Exception 
 	{
 		if(!isEmpty)
 		{
@@ -126,14 +132,14 @@ public class InsertCardData {
 			}
 		}
 	}
-	private void insertSetting()
+	private void insertSetting() throws Exception 
 	{
 		ContentValues cv = new ContentValues(2);
 		cv.put(DBConst.Table2_Column1, DBConst.Card_Limit);
 		cv.put(DBConst.Table2_Column2, DBConst.Total_Limit);
 		database.insert(DBConst.Table2_Name, null, cv);
 	}
-	private void insertSyncTime()
+	private void insertSyncTime() throws Exception 
 	{
 		long date = System.currentTimeMillis();
 		ContentValues cv = new ContentValues();

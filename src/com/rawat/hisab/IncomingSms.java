@@ -36,6 +36,7 @@ public class IncomingSms extends BroadcastReceiver {
                     String message = currentMessage.getDisplayMessageBody();
                     HisabDataSource hds = new HisabDataSource(context);
                     hds.open();
+                    
                     hds.updateCardData(message,currentMessage.getTimestampMillis());
                     hds.close();
                     Log.w("SmsReceiver", "senderNum: "+ senderNum + "; message: " + message);

@@ -7,23 +7,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-
-import com.rawat.hisab.DB.CardDetails;
 import com.rawat.hisab.DB.HisabDataSource;
-
-
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Telephony;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -37,15 +30,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-/*
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Logger;
-import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.analytics.GoogleAnalytics;
 
-import 	com.google.android.gms.analytics.HitBuilders;
-import com.rawat.hisab.ConfigDate.TrackerName;
-*/
 
 public class MainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener{
 
@@ -59,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	private int mYear;
 	private int mMonth;
 	private int mDay;
-	private Notification nf;
+	
 	private HisabDataSource hds;
 	
 
@@ -78,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		hds = new HisabDataSource(this);
 		hds.open();
 		//Notification
-		nf = new Notification(this);
+		
 		CfgDate = (ConfigDate) getApplication();
 		if(CfgDate.getEndMonth() == 0)
 		{
@@ -89,13 +74,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 			CfgDate.setEndMonth(mn+1);
 		}
 		//openChart();
-		Log.w("Card ", "Details");
-		/*List<CardDetails> cd =hds.getAllCardDeatils();
-		Iterator<CardDetails> itr = cd.iterator();
-		itr.hasNext();*/
-		hds.selectData();
-		//hds.updateCardData();
-		Log.w("Database", "After select");
 		hds.close();
 		openRefresh();
 		
@@ -149,28 +127,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		/*Tracker t = ((ConfigDate) getApplication()).getTracker(TrackerName.APP_TRACKER);
 		t.setScreenName("MainActivity");
 		t.send(new HitBuilders.AppViewBuilder().build());*/
-		nf.displayNotification();
+		SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		Log.w("NOtification", SP.getBoolean("notifications_new_message", false)+"");
+		
 		CfgDate = (ConfigDate) getApplication();
 		md= new MainAdapter(this,this);
 		md.setMnt(CfgDate.getMonthInWrd());
 		//md.setYear(CfgDate.getEndYear());
 		GetData data = new GetData(CfgDate,this.getContentResolver());
+		hds.open();
 		int total=0;
 		try
 		{
-		 total = data.getTotal();
+		 total = hds.getTotal(CfgDate.getMonthInWrd(),CfgDate.getEndYear());
 		}
 		catch(NullPointerException e)
 		{
 			Log.w("Catch", "Catch excption");
 		}
-		hds.open();
-		hds.getCardTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
-		hds.getTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
+		
+		//hds.getCardTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
+		//hds.getTotal(CfgDate.getMonthInWrd(), CfgDate.getEndYear());
 		md.setCheck(total);
 		md.setResult(total+"");
-		md.setCardAmt(data.getCardAmt());
-		md.setCardName(data.getCardName());
+		md.setCardAmt(hds.getCardAmt());
+		md.setCardName(hds.getCardName());
 		//md.setVw(openChart());
 		mainListView.setAdapter(md);
 		//logWrite();

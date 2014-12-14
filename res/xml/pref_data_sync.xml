@@ -22,7 +22,7 @@
         <intent android:action="android.settings.SYNC_SETTINGS" />
     </Preference> -->
     
-   <Preference android:title="About" android:key="about" />   
+   <Preference android:title="Share It" android:key="share" />   
    <Preference android:title="Rate APP" android:key="rate"/> 
 
 </PreferenceScreen>

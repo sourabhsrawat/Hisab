@@ -18,6 +18,7 @@ import com.rawat.hisab.R.id;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 
 
@@ -32,18 +33,20 @@ import android.widget.Toast;
 
 public class MainAdapter extends BaseAdapter {
 
+	protected static final String CARDNAME = null;
+	protected static final String AMT = null;
 	private LayoutInflater mInflater;
 	private Context mContext;
 	private Activity aa;
 	private String mnt;
 	private String result;
-	
+
 	private List<String> cardName;
 	private List<Double> cardAmt;
-	
+
 	private Iterator<String> itrName;
 	private Iterator<Double> itrAmt;
-	
+
 	private int ck;
 
 
@@ -52,7 +55,7 @@ public class MainAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(context);
 		this.mContext=context;
 		this.aa=a;
-		
+
 		cardName= new ArrayList<String>();
 		cardAmt = new ArrayList<Double>();
 	}
@@ -94,7 +97,7 @@ public class MainAdapter extends BaseAdapter {
 	{
 		this.ck=i;
 	}
-	
+
 	public void setResult(String rst)
 	{
 		this.result=rst ;
@@ -110,7 +113,7 @@ public class MainAdapter extends BaseAdapter {
 		this.cardName=cardName;
 		itrName=cardName.iterator();
 	}
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup arg2) {
 		// TODO Auto-generated method stub
@@ -160,7 +163,7 @@ public class MainAdapter extends BaseAdapter {
 		}
 		return convertView;
 	}
-	
+
 	private GraphicalView openChart(){
 		//GraphicalView mChart;
 		// Pie Chart Slice Names
@@ -178,7 +181,7 @@ public class MainAdapter extends BaseAdapter {
 		}
 		// Instantiating a renderer for the Pie Chart
 
-		
+
 		defaultRenderer.setPanEnabled(false);
 		defaultRenderer.setDisplayValues(true);
 
@@ -197,6 +200,12 @@ public class MainAdapter extends BaseAdapter {
 				} else {
 
 					Toast.makeText( aa, "" + cardName.get(seriesSelection.getPointIndex()) + "  " + " Amount " + seriesSelection.getValue()+"\u20B9", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(aa, DisplayDetails.class);
+					intent.putExtra(CARDNAME, cardName.get(seriesSelection.getPointIndex())+"_"+seriesSelection.getValue());
+					//intent.putExtra(AMT, seriesSelection.getValue()+"");
+					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					aa.startActivity(intent);
+				
 				}
 			}
 		});

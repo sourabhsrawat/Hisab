@@ -6,59 +6,74 @@ import java.util.List;
 
 import com.rawat.hisab.CardIdentifier;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.Telephony;
 import android.util.Log;
 
-public class CardDataProvider {
+@SuppressLint("InlinedApi") public class CardDataProvider {
 
 	List<CardDetails> cd;
 	CardDetails cdObj;
 	String mntWrd;
 	int mnt;
 	int yr;
-	
+
 	Context ct;
 	public CardDataProvider(Context context)
 	{
 		ct=context;
 	}
-	public List<CardDetails> getSMS()
+	public List<CardDetails> getSMS() 
 	{
-		Log.w("Database", "Get SMS");
-		ContentResolver cR = ct.getContentResolver();
-		Cursor cur = cR.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null,null);
-		Calendar cl = Calendar.getInstance();
-		cd = new ArrayList<CardDetails>();
+		try
+		{
+			Log.w("Database", "Get SMS");
+			ContentResolver cR = ct.getContentResolver();
+			Cursor cur = cR.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null,null);
+			Calendar cl = Calendar.getInstance();
+			cd = new ArrayList<CardDetails>();
 
-		String msg="";
-		while (cur.moveToNext()) {
-			long ms= Long.parseLong(cur.getString(cur.getColumnIndexOrThrow("date")));
-			cdObj = new CardDetails();
-			cl.setTimeInMillis(ms);
-			mnt=cl.get(Calendar.MONTH)+1;
-			yr=cl.get(Calendar.YEAR);
-			mntWrd=getMonthInWrd(mnt);
-			msg=cur.getString(cur.getColumnIndexOrThrow("body"));
-			readSMS(msg,ms);
+			String msg="";
+			while (cur.moveToNext()) {
+				long ms= Long.parseLong(cur.getString(cur.getColumnIndexOrThrow("date")));
+				cdObj = new CardDetails();
+				cl.setTimeInMillis(ms);
+				mnt=cl.get(Calendar.MONTH)+1;
+				yr=cl.get(Calendar.YEAR);
+				mntWrd=getMonthInWrd(mnt);
+				msg=cur.getString(cur.getColumnIndexOrThrow("body"));
+				readSMS(msg,ms);
+			}
+			cur.close();
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in fetching ", e.getMessage());
 		}
 		return cd;
 	}
-	public List<CardDetails> newSMS(String msg,long ms)
+	public List<CardDetails> newSMS(String msg,long ms) 
 	{
-		cd = new ArrayList<CardDetails>();
-		cdObj = new CardDetails();
-		Calendar cl = Calendar.getInstance();
-		mnt=cl.get(Calendar.MONTH)+1;
-		yr=cl.get(Calendar.YEAR);
-		mntWrd=getMonthInWrd(mnt);
-		readSMS(msg,ms);
+		try{
+			cd = new ArrayList<CardDetails>();
+			cdObj = new CardDetails();
+			Calendar cl = Calendar.getInstance();
+			mnt=cl.get(Calendar.MONTH)+1;
+			yr=cl.get(Calendar.YEAR);
+			mntWrd=getMonthInWrd(mnt);
+			readSMS(msg,ms);
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in fetching ", e.getMessage());
+		}
 		return cd;
 	}
 
-	public void readSMS(String msg,long ms)
+	public void readSMS(String msg,long ms) throws Exception 
 	{
 		if(msg.contains(CardIdentifier.iciciCredit_Check))
 		{
