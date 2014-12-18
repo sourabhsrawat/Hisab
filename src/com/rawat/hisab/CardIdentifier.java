@@ -42,7 +42,7 @@ public interface CardIdentifier {
 	public static final String[] hdfcDedit_Split = {"Rs.","towards"};
 	public static final String[] cityAtm_Split = {"Rs.","was"};
 	public static final String[] cityAtm2_Split = {"Rs.","withdrawn"};
-	public static final String[] cityDebit_Split={"Rs.","on"};
+	public static final String[] cityDebit_Split={"Rs.","at"};
 	public static final String[] cityCredit_Split={"Rs","was"};
 	public static final String[] iciciDebit_Purchase_Check1_Check2_Split = {"INR","on"};
 	public static final String[] iciciDebit_in1_Split = {"INR","ATM"};

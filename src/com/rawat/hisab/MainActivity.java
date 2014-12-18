@@ -74,6 +74,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 			CfgDate.setEndMonth(mn+1);
 		}
 		//openChart();
+		
 		hds.close();
 		openRefresh();
 		

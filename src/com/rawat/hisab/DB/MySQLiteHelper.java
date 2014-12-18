@@ -37,6 +37,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 	private static final String CREATE_TABLE6="CREATE TABLE " +DBConst.Table6_Name + " ( " + DBConst.Table6_Column1 +
 			" REAL " + " ) ";
 	
+	private static final String CREATE_TABLE7="CREATE TABLE " + DBConst.Table7_Name + " ( " + DBConst.Table7_Column1 + 
+			" TEXT, " + DBConst.Table7_Column2 + " TEXT " + " )";
+	
 
 
 	public MySQLiteHelper(Context context) {
@@ -56,6 +59,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 		database.execSQL(CREATE_TABLE4);
 		database.execSQL(CREATE_TABLE5);
 		database.execSQL(CREATE_TABLE6);
+		database.execSQL(CREATE_TABLE7);
 		
 		Log.w("Database real", "created");
 		

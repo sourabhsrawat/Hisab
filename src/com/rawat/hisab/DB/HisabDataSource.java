@@ -15,13 +15,12 @@ public class HisabDataSource {
 
 	private SQLiteDatabase database;
 	private MySQLiteHelper dbHelper;
-	String mnt="NOVEMBER";
-	String yr="14";
 	Context ct;
 	private List<Double> amt;
 	private List<String> cardName;
 	private CardDetails cd;
 	private List<CardDetails> listCardDetails;
+	private boolean cardMsg=true;
 
 	private String[] allTable6Columns= {DBConst.Table6_Column1};
 
@@ -48,6 +47,7 @@ public class HisabDataSource {
 		{
 			UpdateCardData uCD= new UpdateCardData(database, ct);
 			uCD.updateCardDetails(msg,ms);
+			setCardMsg(uCD.isCarMsg());
 		}
 		catch(Exception e)
 		{
@@ -304,6 +304,28 @@ public class HisabDataSource {
 		}
 		return check;
 	}
+	public List<TagInfo> getTagInfo(String at)
+	{
+		List<TagInfo> lsTg = new ArrayList<TagInfo>();
+		
+		try
+		{
+			Cursor crTagInfo = database.query(DBConst.Table7_Name, null, DBConst.Table7_Column1+" =? ", new String[]{at}, 
+												null, null, null);
+			while(crTagInfo.moveToNext())
+			{
+				TagInfo tg = new TagInfo();
+				tg.setAt(crTagInfo.getString(0));
+				tg.setTag(crTagInfo.getString(1));
+				lsTg.add(tg);
+			}
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in TagInfo ", e.getMessage());
+		}
+		return lsTg;
+	}
 	public List<Double> getCardAmt()
 	{
 		return amt;
@@ -311,5 +333,13 @@ public class HisabDataSource {
 	public List<String> getCardName()
 	{
 		return cardName;
+	}
+
+	public boolean isCardMsg() {
+		return cardMsg;
+	}
+
+	public void setCardMsg(boolean cardMsg) {
+		this.cardMsg = cardMsg;
 	}
 }

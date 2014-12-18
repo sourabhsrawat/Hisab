@@ -43,6 +43,11 @@ public interface DBConst {
 	public static final String Table6_Name="Sync";
 	public static final String Table6_Column1="Last_Sync";
 	
+	//Table Seven
+	public static final String Table7_Name="TagInfo";
+	public static final String Table7_Column1="AT";
+	public static final String Table7_Column2="Tag";
+	
 	
 	//Card ID and Name
 	public static final String card [][]={
@@ -54,9 +59,9 @@ public interface DBConst {
 		{"06","Amex_Credit"},
 		{"07","HDFC_Debit"},
 		{"8","Standard_Chartered_Credit"},
-		{"9","Kotak_Debit_Card"},
+		{"9","Kotak_Debit"},
 		{"10","Citi_Credit"},
-		{"11","SBI_Credit_Card"},
+		{"11","SBI_Credit"},
 		{"12","BOB"},
 	};
 	

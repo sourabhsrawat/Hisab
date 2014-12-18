@@ -14,11 +14,12 @@ public class Notification {
 	   private int notificationID = 100;
 	   Activity ac;
 	   private int numMessages=0;
+	   private Context ct;
 	  
 	   
-	   public Notification(Activity ac)
+	   public Notification(Context c)
 	   {
-		   this.ac=ac;
+		   this.ct=c;
 	   }
 	   
 	   protected void displayNotification(String msg,int num) {
@@ -26,7 +27,7 @@ public class Notification {
 
 		      /* Invoking the default notification service */
 		      NotificationCompat.Builder  mBuilder = 
-		      new NotificationCompat.Builder(ac);	
+		      new NotificationCompat.Builder(ct);	
 
 		      mBuilder.setContentTitle("Hisab");
 		      mBuilder.setContentText("Your "+msg+" limit has been exceeded");
@@ -37,9 +38,9 @@ public class Notification {
 		    //  mBuilder.setNumber(++numMessages);
 		      
 		      /* Creates an explicit intent for an Activity in your app */
-		      Intent resultIntent = new Intent(ac, MainActivity.class);
+		      Intent resultIntent = new Intent(ct, MainActivity.class);
 
-		      TaskStackBuilder stackBuilder = TaskStackBuilder.create(ac);
+		      TaskStackBuilder stackBuilder = TaskStackBuilder.create(ct);
 		      stackBuilder.addParentStack(MainActivity.class);
 
 		      /* Adds the Intent that starts the Activity to the top of the stack */
@@ -53,7 +54,7 @@ public class Notification {
 		      mBuilder.setContentIntent(resultPendingIntent);
 
 		      mNotificationManager =
-		      (NotificationManager)ac. getSystemService(Context.NOTIFICATION_SERVICE);
+		      (NotificationManager)ct. getSystemService(Context.NOTIFICATION_SERVICE);
 
 		      /* notificationID allows you to update the notification later on. */
 		      mNotificationManager.notify(num, mBuilder.build());

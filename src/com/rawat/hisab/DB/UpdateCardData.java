@@ -16,6 +16,7 @@ public class UpdateCardData {
 	private Context ct;
 	private boolean isEmpty=false;
 	private String[] allTable6Columns= {DBConst.Table6_Column1};
+	private  boolean carMsg=true;
 
 	public UpdateCardData(SQLiteDatabase database,Context ct)
 	{
@@ -28,11 +29,12 @@ public class UpdateCardData {
 		try
 		{
 			Log.w("Update", "Under Update Update Card Details");
-			CardDataProvider cdp = new CardDataProvider(ct);
+			SMSScanner cdp = new SMSScanner(ct);
 			List<CardDetails> cdls = cdp.newSMS(msg,ms);
 			if(cdls.isEmpty())
 			{
 				isEmpty=true;
+				setCarMsg(false);
 				Log.w("Update", "No Update");
 			}
 			else
@@ -48,11 +50,15 @@ public class UpdateCardData {
 					cv.put(DBConst.Table1_Column1, cd.getMsgtimeStamp());
 					cv.put(DBConst.Table1_Column2, cd.getID());
 					cv.put(DBConst.Table1_Column3, cd.getAmt());
-					cv.put(DBConst.Table1_Column4, "AT");
+					cv.put(DBConst.Table1_Column4, cd.getAt());
 					cv.put(DBConst.Table1_Column5, cd.getMnt());
 					cv.put(DBConst.Table1_Column6, cd.getYr());
 					database.insert(DBConst.Table1_Name, null, cv);
-
+					
+					//Check at is present in the tag info
+					if(!checkAt(cd.getAt()))
+						updateTagInfo(cd.getAt());
+						
 					updateCardMontlyData();
 				}
 				
@@ -164,6 +170,35 @@ public class UpdateCardData {
 		cv.put(DBConst.Table6_Column1, date);
 		database.update(DBConst.Table6_Name, cv, DBConst.Table6_Column1 +" =? ", new String[]{chk.getLong(0)+""});
 		chk.close();
+	}
+	
+	public void updateTagInfo(String at) throws Exception
+	{
+		ContentValues cv = new ContentValues();
+		cv.put(DBConst.Table7_Column1, at);
+		cv.put(DBConst.Table7_Column2, "null");
+		database.insert(DBConst.Table7_Name, null, cv);
+		Log.w("Update Tag", "Tag updated");
+	}
+	
+	public Boolean checkAt(String at) throws Exception
+	{
+		boolean isPresent=false;
+		Cursor crCheckAt = database.query(DBConst.Table7_Name, new String[]{DBConst.Table7_Column1}, 
+										  DBConst.Table7_Column1+" =? ", new String[]{at}, null, null, null);
+		if(crCheckAt.getCount() > 0)
+		  isPresent=true;
+		
+		Log.w("Check at",isPresent+" "+at);
+		return isPresent;
+	}
+
+	public  boolean isCarMsg() {
+		return carMsg;
+	}
+
+	public  void setCarMsg(boolean carMsg) {
+		this.carMsg = carMsg;
 	}
 
 }

@@ -13,7 +13,7 @@ import android.database.Cursor;
 import android.provider.Telephony;
 import android.util.Log;
 
-@SuppressLint("InlinedApi") public class CardDataProvider {
+@SuppressLint("InlinedApi") public class SMSScanner {
 
 	List<CardDetails> cd;
 	CardDetails cdObj;
@@ -22,7 +22,7 @@ import android.util.Log;
 	int yr;
 
 	Context ct;
-	public CardDataProvider(Context context)
+	public SMSScanner(Context context)
 	{
 		ct=context;
 	}
@@ -80,7 +80,7 @@ import android.util.Log;
 			cdObj.setID(01);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.iciciCredit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"at "," on"));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -90,7 +90,7 @@ import android.util.Log;
 			cdObj.setID(02);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcCredit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"at","\\."));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -106,7 +106,7 @@ import android.util.Log;
 			cdObj.setID(02);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(hdfcCredit);
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"SMARTPAY","for"));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -118,10 +118,14 @@ import android.util.Log;
 			if(msg.contains("was"))
 			{
 				cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm_Split,msg));
+				cdObj.setAt(getAt(msg,"an","from"));
 			}
 			else
+			{
 				cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm2_Split,msg));
-			cdObj.setAt("");
+				cdObj.setAt("ATM");
+			}
+
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -134,7 +138,7 @@ import android.util.Log;
 				cdObj.setID(03);
 				cdObj.setMsgtimeStamp(ms);
 				cdObj.setAmt( getCreditAmt(CardIdentifier.cityDebit_Split,msg));
-				cdObj.setAt("");
+				cdObj.setAt(getAt(msg,"at ","on"));
 				cdObj.setMnt(mntWrd);
 				cdObj.setYr(yr);
 				cd.add(cdObj);
@@ -146,7 +150,7 @@ import android.util.Log;
 			cdObj.setID(10);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt( getCreditAmt(CardIdentifier.cityCredit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"at ","\\."));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -162,6 +166,7 @@ import android.util.Log;
 			if(msg.contains(CardIdentifier.sbiDebit_in2_Check2))
 			{
 				sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_in2_Split,msg);
+				cdObj.setAt("ATM");
 			}
 			else if(msg.contains(CardIdentifier.sbiDebit_in3_Check2))
 			{
@@ -169,24 +174,30 @@ import android.util.Log;
 				String[] separated = msg.split("Rs");
 				tmp2=separated[1];
 				sbi=Double.valueOf((tmp2));
+				cdObj.setAt("ATM");
 			}
 			else if(msg.contains(CardIdentifier.sbiDebit_Check1))
 			{
 				sbi=getCreditAmt(CardIdentifier.sbiDebit_Check1_Split,msg);
+				cdObj.setAt(getAt(msg,"at","t"));
 			}
 			else if (msg.contains(CardIdentifier.sbiDebit_Check2))
 			{
 				sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_Split,msg);
+				if(msg.contains("WDL"))
+					cdObj.setAt("ATM");
+				else
+					cdObj.setAt("NEFT");
 			}
 			else if (msg.contains(CardIdentifier.sbiDebit_in1_Check2))
 			{
 				sbi=getCreditAmt(CardIdentifier.sbiDebit_Check2_Split,msg);
+				cdObj.setAt(getAt(msg,"at","t"));
 			}
 
 			cdObj.setID(05);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt( sbi);
-			cdObj.setAt("");
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -201,7 +212,7 @@ import android.util.Log;
 			cdObj.setID(05);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.sbiDebitIB_Check_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt("NO INFO");
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -211,7 +222,7 @@ import android.util.Log;
 			cdObj.setID(06);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.amex_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"at ","on"));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -221,7 +232,7 @@ import android.util.Log;
 			cdObj.setID(07);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcDedit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"towards","in"));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -239,7 +250,7 @@ import android.util.Log;
 			cdObj.setID(8);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(stanChart);
-			cdObj.setAt("");
+			cdObj.setAt("NO INFO");
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -249,7 +260,7 @@ import android.util.Log;
 			cdObj.setID(9);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.kotakDebit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"at ","\\."));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -259,7 +270,7 @@ import android.util.Log;
 			cdObj.setID(12);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.bob_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt(getAt(msg,"AT","\\."));
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -269,7 +280,7 @@ import android.util.Log;
 			cdObj.setID(11);
 			cdObj.setMsgtimeStamp(ms);
 			cdObj.setAmt(getCreditAmt(CardIdentifier.sbi_Credit_Split,msg));
-			cdObj.setAt("");
+			cdObj.setAt("NO INFO");
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
@@ -283,25 +294,29 @@ import android.util.Log;
 		if(tmp1.contains(CardIdentifier.iciciDebitPurchase_Check))
 		{
 			iciciDB=getCreditAmt(CardIdentifier.iciciDebit_Purchase_Check1_Check2_Split,tmp1);
+			cdObj.setAt(getAt(tmp1,"\\*","\\."));
 		}
 		else if(tmp1.contains(CardIdentifier.iciciDebit_Check1) && tmp1.contains(CardIdentifier.iciciDebit_Check2))
 		{
 			iciciDB=getCreditAmt(CardIdentifier.iciciDebit_Purchase_Check1_Check2_Split,tmp1);
+			cdObj.setAt("NO INFO");
 		}
 		else if (tmp1.contains(CardIdentifier.iciciDebit_in_Check))
 		{
 			if(tmp1.contains(CardIdentifier.iciciDebit_in1_Check))
 			{
 				iciciDB=getCreditAmt(CardIdentifier.iciciDebit_in1_Split,tmp1);
+				cdObj.setAt("ATM");
 			}
 			if(tmp1.contains(CardIdentifier.iciciDebit_in2_Check))
 			{
 				iciciDB=getCreditAmt(CardIdentifier.iciciDebit_in2_Split,tmp1);
+				cdObj.setAt("ATM");
 			}
 		}
-		cdObj.setID(11);
+		cdObj.setID(4);
 		cdObj.setMsgtimeStamp(ms);
-		cdObj.setAmt( iciciDB);
+		cdObj.setAmt(iciciDB);
 		cdObj.setMnt(mntWrd);
 		cdObj.setYr(yr);
 		cd.add(cdObj);
@@ -337,7 +352,24 @@ import android.util.Log;
 
 		return amt;
 	}
+	private String getAt(String msg,String arg1, String arg2)
+	{
+		try{
+			String[] at;
+			//Log.w("At", msg);
+			at= msg.split(arg1);
+			at = at[1].split(arg2);
+			//Log.w("At", at[0]);
+			return at[0];
+		}
+		catch(Exception e)
+		{
 
+			Log.w("Error at at",e.getMessage());
+			Log.w("At", msg);
+			return "NO INFO";
+		}
+	}
 
 	public String getMonthInWrd(int mnt)
 	{

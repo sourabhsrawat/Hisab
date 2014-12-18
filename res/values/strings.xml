@@ -16,6 +16,7 @@
     <string name="date_title">Configure Date</string>
     <string name="Rp">&#x20B9;%.2f</string>
     <string name="date">DATE</string>
+     <string name="day">DAY</string>
     <string name="amt">Amount</string>
     <string name="at">AT</string>
 

@@ -34,6 +34,8 @@ public class InsertCardData {
 			//Insert Default settings 
 			insertSetting();
 			insertSyncTime();
+			//Insert TagInfo
+			insertTagInfo();
 		}
 		catch(Exception e)
 		{
@@ -50,7 +52,7 @@ public class InsertCardData {
 	}
 	private void insertCardDeatils() throws Exception 
 	{
-		CardDataProvider cdp = new CardDataProvider(ct);
+		SMSScanner cdp = new SMSScanner(ct);
 		List<CardDetails> cdls = cdp.getSMS();
 		if(cdls.isEmpty())
 		{
@@ -68,7 +70,7 @@ public class InsertCardData {
 				cv.put(DBConst.Table1_Column1, cd.getMsgtimeStamp());
 				cv.put(DBConst.Table1_Column2, cd.getID());
 				cv.put(DBConst.Table1_Column3, cd.getAmt());
-				cv.put(DBConst.Table1_Column4, "AT");
+				cv.put(DBConst.Table1_Column4, cd.getAt());
 				cv.put(DBConst.Table1_Column5, cd.getMnt());
 				cv.put(DBConst.Table1_Column6, cd.getYr());
 				database.insert(DBConst.Table1_Name, null, cv);
@@ -146,4 +148,19 @@ public class InsertCardData {
 		cv.put(DBConst.Table6_Column1, date);
 		database.insert(DBConst.Table6_Name, null, cv);
 	}
+	private void insertTagInfo() throws Exception
+	{
+		Cursor crSelectAt = database.query(true, DBConst.Table1_Name, new String[]{DBConst.Table1_Column4}, null, 
+											null, null, null, null, null, null);
+		while(crSelectAt.moveToNext())
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(DBConst.Table7_Column1, crSelectAt.getString(0));
+			cv.put(DBConst.Table7_Column2, "null");
+			database.insert(DBConst.Table7_Name, null, cv);
+			
+		}
+		
+	}
+	
 }
