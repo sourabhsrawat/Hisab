@@ -6,7 +6,11 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 public class Notification {
 	
@@ -33,7 +37,7 @@ public class Notification {
 		      mBuilder.setContentText("Your "+msg+" limit has been exceeded");
 		      mBuilder.setTicker("Hisab Alert!");
 		      mBuilder.setSmallIcon(R.drawable.ic_launcher);
-
+		      ringtone();
 		      /* Increase notification number every time a new notification arrives */
 		    //  mBuilder.setNumber(++numMessages);
 		      
@@ -56,12 +60,23 @@ public class Notification {
 		      mNotificationManager =
 		      (NotificationManager)ct. getSystemService(Context.NOTIFICATION_SERVICE);
 
+		      mBuilder.setAutoCancel(true);
 		      /* notificationID allows you to update the notification later on. */
 		      mNotificationManager.notify(num, mBuilder.build());
+		      //mNotificationManager.cancel(num);
 		   }
 
 		   protected void cancelNotification() {
 		      mNotificationManager.cancel(notificationID);
 		   }
+		   public void ringtone() {
+			    try {
+			        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			        Ringtone r = RingtoneManager.getRingtone(ct.getApplicationContext(), notification);
+			        r.play();
+			    } catch (Exception e) {
+			    	Log.w("In Ringtone", "Error in ringtone");
+			    }
+			}
 
 }
