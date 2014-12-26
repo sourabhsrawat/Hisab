@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import java.lang.reflect.Field;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener{
@@ -140,7 +141,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 		md= new MainAdapter(this,this);
 		md.setMnt(CfgDate.getMonthInWrd());
 		//md.setYear(CfgDate.getEndYear());
-		GetData data = new GetData(CfgDate,this.getContentResolver());
+		//GetData data = new GetData(CfgDate,this.getContentResolver());
 		hds.open();
 		int total=0;
 		try
@@ -301,24 +302,69 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 	}
 	private DatePickerDialog customDatePicker() {
 		final Calendar c = Calendar.getInstance();
-
-        DatePickerDialog dialog = new DatePickerDialog(this, mDateSetListner, c.get(Calendar.YEAR),
+		DatePickerDialog dialog = new DatePickerDialog(this, mDateSetListner, c.get(Calendar.YEAR),
                 c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT)
+		{
+			
 
-        dialog.getDatePicker().setSpinnersShown(true);
+	        dialog.getDatePicker().setSpinnersShown(true);
 
-        // hiding calendarview and daySpinner in datePicker
-           dialog.getDatePicker().setCalendarViewShown(false);
+	        // hiding calendarview and daySpinner in datePicker
+	           dialog.getDatePicker().setCalendarViewShown(false);
 
-            LinearLayout pickerParentLayout = (LinearLayout) dialog.getDatePicker().getChildAt(0);
+	            LinearLayout pickerParentLayout = (LinearLayout) dialog.getDatePicker().getChildAt(0);
 
-            LinearLayout pickerSpinnersHolder = (LinearLayout) pickerParentLayout.getChildAt(0);
+	            LinearLayout pickerSpinnersHolder = (LinearLayout) pickerParentLayout.getChildAt(0);
 
-            pickerSpinnersHolder.getChildAt(1).setVisibility(View.GONE);
+	            pickerSpinnersHolder.getChildAt(1).setVisibility(View.GONE);
 
 
-        //dialog.setTitle("Pick a date");
-        return dialog;
+	        //dialog.setTitle("Pick a date");
+	        return dialog;
+		}
+		else
+		{
+			Field[] datePickerDialogFields = dialog.getClass().getDeclaredFields();
+			for (Field datePickerDialogField : datePickerDialogFields) {
+				if (datePickerDialogField.getName().equals("mDatePicker")) {
+					datePickerDialogField.setAccessible(true);
+					DatePicker datePicker = null;
+					try {
+						datePicker = (DatePicker) datePickerDialogField
+								.get(dialog);
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Field datePickerFields[] = datePickerDialogField.getType()
+							.getDeclaredFields();
+					for (Field datePickerField : datePickerFields) {
+						if ("mDayPicker".equals(datePickerField.getName())
+								|| "mDaySpinner".equals(datePickerField
+										.getName())) {
+							datePickerField.setAccessible(true);
+							Object dayPicker = new Object();
+							try {
+								dayPicker = datePickerField.get(datePicker);
+							} catch (IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IllegalArgumentException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							((View) dayPicker).setVisibility(View.GONE);
+						}
+					}
+				}
+				
+			}
+			return dialog;
+		}
 	}
 
 

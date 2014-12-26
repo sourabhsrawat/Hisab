@@ -33,6 +33,8 @@ public interface CardIdentifier {
 	public static final String kotakDebit_Check="Kotak Debit card";
 	public static final String bob_Check="is Debited to";
 	public static final String sbi_credit_Check="SBI Credit card";
+	public static final String maha_debit_Check="has been debited by";
+	public static final String cbi_debit_Check="Central Bank of India";
 
 	
 	//Arrays for splitting SMS
@@ -59,6 +61,8 @@ public interface CardIdentifier {
 	public static final String[] kotakDebit_Split={"of Rs.","made"};
 	public static final String[] bob_Split={"Rs.", "is"};
 	public static final String[] sbi_Credit_Split={"Rs.","made"};
-
+	public static final String[] maha_Debit_Split={"Rs. ","on"};
+	public static final String[] cbi_Debit_Split={"Rs.","Total"};
+;
 
 }

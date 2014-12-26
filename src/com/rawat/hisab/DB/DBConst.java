@@ -4,7 +4,7 @@ public interface DBConst {
 
 	//Database 
 	public static final String DATABASE_NAME = "hisab.db";
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 2;
 
 	//Tables
 	//Table One 
@@ -63,6 +63,9 @@ public interface DBConst {
 		{"10","Citi_Credit"},
 		{"11","SBI_Credit"},
 		{"12","BOB"},
+		{"13","BOM"},
+		{"14","CBI"},
+		
 	};
 	
 	//Settings

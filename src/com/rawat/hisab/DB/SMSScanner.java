@@ -285,6 +285,26 @@ import android.util.Log;
 			cdObj.setYr(yr);
 			cd.add(cdObj);
 		}
+		else if(msg.contains(CardIdentifier.maha_debit_Check))
+		{
+			cdObj.setID(13);
+			cdObj.setMsgtimeStamp(ms);
+			cdObj.setAmt(getCreditAmt(CardIdentifier.maha_Debit_Split,msg));
+			cdObj.setAt("NO INFO");
+			cdObj.setMnt(mntWrd);
+			cdObj.setYr(yr);
+			cd.add(cdObj);
+		}
+		else if(msg.contains(CardIdentifier.cbi_debit_Check))
+		{
+			cdObj.setID(14);
+			cdObj.setMsgtimeStamp(ms);
+			cdObj.setAmt(getCreditAmt(CardIdentifier.cbi_Debit_Split,msg));
+			cdObj.setAt("NO INFO");
+			cdObj.setMnt(mntWrd);
+			cdObj.setYr(yr);
+			cd.add(cdObj);
+		}
 
 	}
 

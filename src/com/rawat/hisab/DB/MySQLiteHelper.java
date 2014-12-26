@@ -88,6 +88,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 				"Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table1_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table2_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table3_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table4_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table5_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table6_Name);
+		db.execSQL("DROP TABLE IF EXISTS "+DBConst.Table7_Name);
 		onCreate(db);
 
 	}

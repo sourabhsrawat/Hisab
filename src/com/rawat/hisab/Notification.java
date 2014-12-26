@@ -6,9 +6,11 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -28,6 +30,10 @@ public class Notification {
 	   
 	   protected void displayNotification(String msg,int num) {
 		   
+		   SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(ct.getApplicationContext());
+		   
+		   if(SP.getBoolean("notifications_new_message", false))
+			{
 
 		      /* Invoking the default notification service */
 		      NotificationCompat.Builder  mBuilder = 
@@ -64,6 +70,7 @@ public class Notification {
 		      /* notificationID allows you to update the notification later on. */
 		      mNotificationManager.notify(num, mBuilder.build());
 		      //mNotificationManager.cancel(num);
+			}
 		   }
 
 		   protected void cancelNotification() {
