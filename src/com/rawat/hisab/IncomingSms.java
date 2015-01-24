@@ -1,18 +1,15 @@
 package com.rawat.hisab;
 
 import com.rawat.hisab.DB.HisabDataSource;
+import com.rawat.hisab.utility.ConfigDate;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 public class IncomingSms extends BroadcastReceiver {
 
@@ -37,9 +34,7 @@ public class IncomingSms extends BroadcastReceiver {
 				for (int i = 0; i < pdusObj.length; i++) {
 
 					SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-					String phoneNumber = currentMessage.getDisplayOriginatingAddress();
 
-					String senderNum = phoneNumber;
 					String message = currentMessage.getDisplayMessageBody();
 					HisabDataSource hds = new HisabDataSource(context);
 					hds.open();
@@ -54,13 +49,14 @@ public class IncomingSms extends BroadcastReceiver {
 					if(hds.isCardMsg())
 					{
 						Log.w("Card Msg", "Yes");
-						
+						Log.w("Total Limit", checkTotal);
 							if(hds.checkTotalLmt(checkTotal, CfgDate.getMonthInWrd(), CfgDate.getEndYear()))
 							{
 								nf.displayNotification("Total",1);
 
 							}
 							String checkIndLmt = hds.getSettingInvCardLmt()+"";
+							Log.w("Ind Limit", checkIndLmt);
 							if(hds.checkIndLmt(checkIndLmt, CfgDate.getMonthInWrd(), CfgDate.getEndYear()))
 							{
 

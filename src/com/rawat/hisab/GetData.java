@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.rawat.hisab.utility.CardIdentifier;
+import com.rawat.hisab.utility.ConfigDate;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.Telephony;
 import android.util.Log;
 
@@ -30,8 +32,6 @@ public class GetData {
 	private double bob=0;
 	private double citiCredit=0;
 	private double sbiCredit=0;
-
-
 	public static int count=0;
 	public int cn=0;
 	private List<Double> amt;

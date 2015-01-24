@@ -20,7 +20,8 @@
     <string name="amt">Amount</string>
     <string name="at">AT</string>
     <string name="banner_ad_unit_id">ca-app-pub-8736867658235577/2660352447</string>
-
+	<string name="mail_feedback_email">customerspt.srinnovation@gmail.com</string>
+    <string name="mail_feedback_subject">Hisab Feedback</string>
     <string-array name="string_array">
         <item>Today</item>
         <item>Select Date</item>

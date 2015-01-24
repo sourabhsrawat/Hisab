@@ -6,7 +6,7 @@
 
 
     <!-- Example General settings -->
-    <string name="pref_header_general">NOTIFICATION</string>
+    <string name="pref_header_general">SET LIMIT FOR NOTIFICATION</string>
     <string name="pref_title_Total">Set Maximum Total Limit</string>
     <string name="pref_title_Card">Set Maximum Individual Card Limit</string>
     <string name="pref_default_Total_Max">50000</string>

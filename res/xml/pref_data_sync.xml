@@ -23,6 +23,7 @@
     </Preference> -->
     
    <Preference android:title="Share It" android:key="share" />   
-   <Preference android:title="Rate APP" android:key="rate"/> 
+   <Preference android:title="Rate App" android:key="rate"/>
+   <Preference android:title="Feedback" android:key="feedback"/> 
 
 </PreferenceScreen>

@@ -163,7 +163,7 @@ public class HisabDataSource {
 
 			Cursor cr = database.query(DBConst.Table1_Name,null,DBConst.Table1_Column2+" =? AND " + 
 					DBConst.Table1_Column5+" =?  AND " + DBConst.Table1_Column6 + 
-					" =? ", new String[]{cardID+"",mnt,String.valueOf(yr)}, null, null, null);
+					" =? ", new String[]{cardID+"",mnt,String.valueOf(yr)}, null, null, DBConst.Table1_Column1 +" DESC");
 
 			while(cr.moveToNext())
 			{

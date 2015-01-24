@@ -1,10 +1,8 @@
 package com.rawat.hisab;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -13,16 +11,10 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
-
-import com.rawat.hisab.R.id;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +22,9 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.rawat.hisab.R.id;
+import com.rawat.hisab.utility.ColorCombination;
 
 public class MainAdapter extends BaseAdapter {
 

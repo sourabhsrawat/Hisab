@@ -35,6 +35,7 @@ import android.support.v4.app.NavUtils;
 import java.util.List;
 
 import com.rawat.hisab.DB.HisabDataSource;
+import com.rawat.hisab.utility.ConfigDate;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -146,6 +147,8 @@ public class SettingsActivity extends PreferenceActivity {
 		ButtonClick(prefRate);
 		Preference prefshare = findPreference("share");
 		ButtonShare(prefshare);
+		Preference preffeedback = findPreference("feedback");
+		ButtonFeedBack(preffeedback);
 	}
 
 	/** {@inheritDoc} */
@@ -437,7 +440,7 @@ public class SettingsActivity extends PreferenceActivity {
 	public void ButtonShare(Preference prf)
 	{
 		final String APP_PNAME = "com.rawat.hisab";
-		
+
 		if (prf != null) {
 			prf.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 
@@ -446,7 +449,7 @@ public class SettingsActivity extends PreferenceActivity {
 					Intent share = new Intent(Intent.ACTION_SEND);
 					share.setType("text/plain");
 					String txt="Hisab on my mobile - I just discovered the Hisab App! It's a great App. " +
-							    "Download it here https://play.google.com/store/apps/details?id=com.rawat.hisab";
+							"Download it here https://play.google.com/store/apps/details?id=com.rawat.hisab";
 					share.putExtra(Intent.EXTRA_TEXT, txt);
 					startActivity(Intent.createChooser(share, "Share Text"));
 
@@ -454,8 +457,32 @@ public class SettingsActivity extends PreferenceActivity {
 				}
 			});     
 		}
-		
-	}
 
+	}
+	public void ButtonFeedBack(Preference prf)
+	{
+		if (prf != null) {
+			prf.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+				@Override
+				public boolean onPreferenceClick(Preference arg0) {
+
+					/*Intent email = new Intent(android.content.Intent.ACTION_SEND);
+					email.putExtra(Intent.EXTRA_EMAIL, new String[]{"youremail@yahoo.com"});		  
+					email.putExtra(Intent.EXTRA_SUBJECT, "subject");
+					email.putExtra(Intent.EXTRA_TEXT, "message");
+					email.setType("email");
+					startActivity(Intent.createChooser(email, "Choose an Email client :"));*/
+					Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+				            "mailto",getString(R.string.mail_feedback_email), null));
+				emailIntent.putExtra(Intent.EXTRA_SUBJECT,getString( R.string.mail_feedback_subject));
+				startActivity(Intent.createChooser(emailIntent, "Send email..."));
+					
+					return true;
+
+				}
+			});     
+		}
+	}
 
 }

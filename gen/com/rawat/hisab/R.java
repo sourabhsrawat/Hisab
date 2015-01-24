@@ -1851,30 +1851,32 @@ containing a value of this type.
         public static final int day=0x7f08003f;
         public static final int decline=0x7f080003;
         public static final int hello_world=0x7f080031;
-        public static final int pref_default_Card_Max=0x7f080049;
-        public static final int pref_default_Total_Max=0x7f080048;
+        public static final int mail_feedback_email=0x7f080043;
+        public static final int mail_feedback_subject=0x7f080044;
+        public static final int pref_default_Card_Max=0x7f08004b;
+        public static final int pref_default_Total_Max=0x7f08004a;
         /**  About US 
          */
-        public static final int pref_header_About=0x7f08004a;
+        public static final int pref_header_About=0x7f08004c;
         /**  Strings related to Settings 
  Example General settings 
          */
-        public static final int pref_header_general=0x7f080045;
+        public static final int pref_header_general=0x7f080047;
         /**  Example settings for Notifications 
          */
-        public static final int pref_header_notifications=0x7f08004b;
-        public static final int pref_ringtone_silent=0x7f08004e;
-        public static final int pref_title_Card=0x7f080047;
-        public static final int pref_title_Total=0x7f080046;
-        public static final int pref_title_new_message_notifications=0x7f08004c;
-        public static final int pref_title_ringtone=0x7f08004d;
-        public static final int pref_title_vibrate=0x7f08004f;
+        public static final int pref_header_notifications=0x7f08004d;
+        public static final int pref_ringtone_silent=0x7f080050;
+        public static final int pref_title_Card=0x7f080049;
+        public static final int pref_title_Total=0x7f080048;
+        public static final int pref_title_new_message_notifications=0x7f08004e;
+        public static final int pref_title_ringtone=0x7f08004f;
+        public static final int pref_title_vibrate=0x7f080051;
         public static final int store_picture_message=0x7f080001;
         public static final int store_picture_title=0x7f080000;
         public static final int title_activity_config=0x7f080038;
         public static final int title_activity_display=0x7f080035;
-        public static final int title_activity_display_details=0x7f080043;
-        public static final int title_activity_settings=0x7f080044;
+        public static final int title_activity_display_details=0x7f080045;
+        public static final int title_activity_settings=0x7f080046;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */

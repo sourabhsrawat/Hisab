@@ -19,7 +19,6 @@ public class Notification {
 	 private NotificationManager mNotificationManager;
 	   private int notificationID = 100;
 	   Activity ac;
-	   private int numMessages=0;
 	   private Context ct;
 	  
 	   
