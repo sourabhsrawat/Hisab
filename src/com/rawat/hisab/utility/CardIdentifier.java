@@ -25,6 +25,8 @@ public interface CardIdentifier {
 	public static final String amex_Check1 = "American Express Card";
 	public static final String amex_Check2 = "A charge";
 	public static final String hdfcDebit_Check = "HDFC Bank DEBIT";
+	public static final String hdfcDebit_Check2 = "HDFC Bank Card";
+	public static final String hdfcFoodcard_Check = "Prepaid Card";
 	public static final String stanChartCredit_Check1 = "StanChart Credit";
 	public static final String stanChartCredit_Check2 = "Call";
 	public static final String iciciDebit_in_Check = "WDL";
@@ -41,7 +43,9 @@ public interface CardIdentifier {
 	public static final String[] iciciCredit_Split = {"Tranx of INR","using"};
 	public static final String[] hdfcCredit_Split = {"Rs.","was"};
 	public static final String[] hdfcCreditSMT_Split = {"Rs."};
-	public static final String[] hdfcDedit_Split = {"Rs.","towards"};
+	public static final String[] hdfcDebit_Split = {"Rs.","towards"};
+	public static final String[] hdfcDebit_Split2 = {"Rs.","was"};
+	public static final String[] hdfcFoodcard_Split = {"of","INR"};
 	public static final String[] cityAtm_Split = {"Rs.","was"};
 	public static final String[] cityAtm2_Split = {"Rs.","withdrawn"};
 	public static final String[] cityDebit_Split={"Rs.","at"};

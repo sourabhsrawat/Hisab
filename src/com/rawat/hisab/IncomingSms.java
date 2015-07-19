@@ -3,6 +3,7 @@ package com.rawat.hisab;
 import com.rawat.hisab.DB.HisabDataSource;
 import com.rawat.hisab.utility.ConfigDate;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ public class IncomingSms extends BroadcastReceiver {
 					String message = currentMessage.getDisplayMessageBody();
 					HisabDataSource hds = new HisabDataSource(context);
 					hds.open();
+					
 					nf = new Notification(context.getApplicationContext());
 					hds.updateCardData(message,currentMessage.getTimestampMillis());
 					String checkTotal = hds.getSettingTotalLmt()+"";
@@ -65,6 +67,7 @@ public class IncomingSms extends BroadcastReceiver {
 							}
 						
 					}
+					
 					hds.close();
 					//Log.w("SmsReceiver", "senderNum: "+ senderNum + "; message: " + message);
 

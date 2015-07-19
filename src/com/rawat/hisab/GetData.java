@@ -171,18 +171,24 @@ public class GetData {
 				}
 				else if(msg.contains(CardIdentifier.cityAtm_Check) || msg.contains(CardIdentifier.cityAtm_Check1))
 				{
-					if(msg.contains("was"))
-						city=getCreditAmt(CardIdentifier.cityAtm_Split,msg)+city;
-					else
-						city=getCreditAmt(CardIdentifier.cityAtm2_Split,msg)+city;
+					if(!(msg.contains(CardIdentifier.hdfcDebit_Check2)))
+					{
+						if(msg.contains("was"))
+							city=getCreditAmt(CardIdentifier.cityAtm_Split,msg)+city;
+						else
+							city=getCreditAmt(CardIdentifier.cityAtm2_Split,msg)+city;
+					}
 
 				}
 				else if(msg.contains(CardIdentifier.cityDebit_Check1))
 				{
-					if(msg.contains(CardIdentifier.cityDebit_Check2))
+					if(!(msg.contains(CardIdentifier.hdfcDebit_Check2)))
 					{
-						city=getCreditAmt(CardIdentifier.cityDebit_Split,msg)+city;
+						if(msg.contains(CardIdentifier.cityDebit_Check2))
+						{
+							city=getCreditAmt(CardIdentifier.cityDebit_Split,msg)+city;
 
+						}
 					}
 				}
 				else if(msg.contains(CardIdentifier.cityCredit_Check))
@@ -232,9 +238,9 @@ public class GetData {
 				{
 					amex=getCreditAmt(CardIdentifier.amex_Split,msg)+amex;
 				}
-				else if(msg.contains(CardIdentifier.hdfcDebit_Check))
+				else if(msg.contains(CardIdentifier.hdfcDebit_Check) || msg.contains(CardIdentifier.hdfcDebit_Check2))
 				{
-					hdfcDebit= getCreditAmt(CardIdentifier.hdfcDedit_Split,msg)+hdfcDebit;
+					hdfcDebit= getCreditAmt(CardIdentifier.hdfcDebit_Split,msg)+hdfcDebit;
 				}
 				else if(msg.contains(CardIdentifier.stanChartCredit_Check1))
 				{

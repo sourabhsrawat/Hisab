@@ -54,7 +54,19 @@ public class HisabDataSource {
 			Log.w("Error in Updating record ", e.getMessage());
 		}
 	}
-
+	public void deleteRow(String msgTmp, int cardId, double amt, String mnt, int yr)
+	{
+		try 
+		{
+			UpdateCardData uCD= new UpdateCardData(database, ct);
+			uCD.deleteTransaction(msgTmp,cardId,amt,mnt,yr,getMontlyCardTotal(cardId,mnt,yr),getTotal(mnt,yr));
+		}
+		catch(Exception e)
+		{
+			Log.w("Error in Deleting record ", e.getMessage());
+		}
+		
+	}
 
 	public long getLastSync() 
 	{
@@ -92,19 +104,32 @@ public class HisabDataSource {
 		}
 
 	}
-	private void getCardTotal(String mnt, int yr)
+	public double getMontlyCardTotal(int cardId, String mnt, int yr)
+	{
+		String [] cardTotal = new String[]{DBConst.Table3_Column4};
+		Cursor cursor=database.query(DBConst.Table3_Name,cardTotal, DBConst.Table3_Column1 +" =? AND "+
+				DBConst.Table3_Column2 +"=? AND " + DBConst.Table3_Column3 + " =? ",
+				new String[] {cardId+"",mnt,yr+""},
+				null, null, null);
+		cursor.moveToNext();
+		double total = cursor.getDouble(0);
+		cursor.close();
+		return total;
+		
+	}
+	private void calculateCardTotal(String mnt, int yr)
 	{
 		try{
 			amt = new ArrayList<Double>();
 			cardName=new ArrayList<String>();
-			String [] str = new String[]{DBConst.Table3_Column4};
+			String [] cardTotal = new String[]{DBConst.Table3_Column4};
 			Cursor crCardID = database.query(true,DBConst.Table1_Name,new String[]{DBConst.Table1_Column2}, 
 					DBConst.Table1_Column5 +"=?"+" AND "+ DBConst.Table1_Column6 
 					+"=?", new String[]{mnt,yr+""}, null, null, null,null,null);
 			while(crCardID.moveToNext())
 			{
 				int cardID = crCardID.getInt(0);
-				Cursor cursor=database.query(DBConst.Table3_Name,str, DBConst.Table3_Column1 +" =? AND "+
+				Cursor cursor=database.query(DBConst.Table3_Name,cardTotal, DBConst.Table3_Column1 +" =? AND "+
 						DBConst.Table3_Column2 +"=? AND " + DBConst.Table3_Column3 + " =? ",
 						new String[] {cardID+"",mnt,yr+""},
 						null, null, null);
@@ -135,7 +160,7 @@ public class HisabDataSource {
 	{
 		int total=0;
 		try{
-			getCardTotal(mnt, yr);
+			calculateCardTotal(mnt, yr);
 			String [] str = new String[]{DBConst.Table5_Column3};
 			Cursor cursor = database.query(DBConst.Table5_Name, str, DBConst.Table5_Column1+" = ? AND "+DBConst.Table5_Column2 + " = ? ", 
 					new String[]{mnt,yr+""}, null, null, null);

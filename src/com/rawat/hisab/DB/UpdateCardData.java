@@ -54,14 +54,14 @@ public class UpdateCardData {
 					cv.put(DBConst.Table1_Column5, cd.getMnt());
 					cv.put(DBConst.Table1_Column6, cd.getYr());
 					database.insert(DBConst.Table1_Name, null, cv);
-					
+
 					//Check at is present in the tag info
 					if(!checkAt(cd.getAt()))
 						updateTagInfo(cd.getAt());
-						
+
 					updateCardMontlyData();
 				}
-				
+
 			}
 		}
 		catch(Exception e)
@@ -114,7 +114,7 @@ public class UpdateCardData {
 				crSum.close();
 			}
 			cr.close();
-			
+
 		}
 	}
 	private void updateMntTotal(String mnt, int yr) throws Exception
@@ -149,6 +149,42 @@ public class UpdateCardData {
 		crSum.close();
 
 	}
+	public void deleteTransaction(String msgTmp, int cardId, double amt, String mnt, int yr,double montlyCardTotal, int total) throws Exception 
+	{
+		database.delete(DBConst.Table1_Name,DBConst.Table1_Column1 +" = "+msgTmp, null);
+		updateCardMontlyTotalAfterDeleteTransaction(cardId,amt,mnt,yr,montlyCardTotal);
+		updateTotalAfterDeleteTransaction(amt,mnt,yr,total);
+	}
+	private void updateCardMontlyTotalAfterDeleteTransaction(int cardId, double amt, String mnt, int yr,double montlyCardTotal)
+	{
+		if(amt == montlyCardTotal)
+		{
+			database.delete(DBConst.Table3_Name, DBConst.Table3_Column1 + " = ? AND " +
+					DBConst.Table3_Column2 + " = ? AND " + DBConst.Table3_Column3 + " = ? " , new String[]{cardId+"",mnt,yr+""});
+		}
+		else 
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(DBConst.Table3_Column4, montlyCardTotal - amt);
+			database.update(DBConst.Table3_Name, cv,DBConst.Table3_Column1 + " = ? AND " +
+					DBConst.Table3_Column2 + " = ? AND " + DBConst.Table3_Column3 + " = ? " , new String[]{cardId+"",mnt,yr+""});
+		}
+	}
+	private void updateTotalAfterDeleteTransaction(double amt, String mnt, int yr, int total)
+	{
+		if(amt == total)
+		{
+			database.delete(DBConst.Table5_Name, DBConst.Table5_Column1 + " = ? AND "+ 
+							DBConst.Table5_Column2 + " = ? ", new String[]{mnt,yr+""});
+		}
+		else
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(DBConst.Table5_Column3, total- amt);
+			database.update(DBConst.Table5_Name, cv, DBConst.Table5_Column1 + " = ? AND "+ 
+							DBConst.Table5_Column2 + " = ? ", new String[]{mnt,yr+""});
+		}
+	}
 	public long getLastSync() throws Exception
 	{
 		Log.w("last sync", "ls");
@@ -171,7 +207,7 @@ public class UpdateCardData {
 		database.update(DBConst.Table6_Name, cv, DBConst.Table6_Column1 +" =? ", new String[]{chk.getLong(0)+""});
 		chk.close();
 	}
-	
+
 	public void updateTagInfo(String at) throws Exception
 	{
 		ContentValues cv = new ContentValues();
@@ -180,15 +216,15 @@ public class UpdateCardData {
 		database.insert(DBConst.Table7_Name, null, cv);
 		Log.w("Update Tag", "Tag updated");
 	}
-	
+
 	public Boolean checkAt(String at) throws Exception
 	{
 		boolean isPresent=false;
 		Cursor crCheckAt = database.query(DBConst.Table7_Name, new String[]{DBConst.Table7_Column1}, 
-										  DBConst.Table7_Column1+" =? ", new String[]{at}, null, null, null);
+				DBConst.Table7_Column1+" =? ", new String[]{at}, null, null, null);
 		if(crCheckAt.getCount() > 0)
-		  isPresent=true;
-		
+			isPresent=true;
+
 		Log.w("Check at",isPresent+" "+at);
 		return isPresent;
 	}

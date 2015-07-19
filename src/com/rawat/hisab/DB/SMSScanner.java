@@ -113,22 +113,35 @@ import android.util.Log;
 		}
 		else if(msg.contains(CardIdentifier.cityAtm_Check) || msg.contains(CardIdentifier.cityAtm_Check1))
 		{
-			cdObj.setID(03);
-			cdObj.setMsgtimeStamp(ms);
-			if(msg.contains("was"))
+			if(msg.contains(CardIdentifier.hdfcDebit_Check2))
 			{
-				cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm_Split,msg));
-				cdObj.setAt(getAt(msg,"an","from"));
+				cdObj.setID(07);
+				cdObj.setMsgtimeStamp(ms);
+				cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcDebit_Split2,msg));
+				cdObj.setAt(getAt(msg,"at","\\."));
+				cdObj.setMnt(mntWrd);
+				cdObj.setYr(yr);
+				cd.add(cdObj);
 			}
-			else
+			if(!(msg.contains(CardIdentifier.hdfcDebit_Check2)))
 			{
-				cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm2_Split,msg));
-				cdObj.setAt("ATM");
-			}
+				cdObj.setID(03);
+				cdObj.setMsgtimeStamp(ms);
+				if(msg.contains("was"))
+				{
+					cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm_Split,msg));
+					cdObj.setAt(getAt(msg,"an","from"));
+				}
+				else
+				{
+					cdObj.setAmt( getCreditAmt(CardIdentifier.cityAtm2_Split,msg));
+					cdObj.setAt("ATM");
+				}
 
-			cdObj.setMnt(mntWrd);
-			cdObj.setYr(yr);
-			cd.add(cdObj);
+				cdObj.setMnt(mntWrd);
+				cdObj.setYr(yr);
+				cd.add(cdObj);
+			}
 
 		}
 		else if(msg.contains(CardIdentifier.cityDebit_Check1))
@@ -231,8 +244,18 @@ import android.util.Log;
 		{
 			cdObj.setID(07);
 			cdObj.setMsgtimeStamp(ms);
-			cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcDedit_Split,msg));
+			cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcDebit_Split,msg));
 			cdObj.setAt(getAt(msg,"towards","in"));
+			cdObj.setMnt(mntWrd);
+			cdObj.setYr(yr);
+			cd.add(cdObj);
+		}
+		else if (msg.contains(CardIdentifier.hdfcFoodcard_Check))
+		{
+			cdObj.setID(07);
+			cdObj.setMsgtimeStamp(ms);
+			cdObj.setAmt(getCreditAmt(CardIdentifier.hdfcFoodcard_Split,msg));
+			cdObj.setAt("Food");
 			cdObj.setMnt(mntWrd);
 			cdObj.setYr(yr);
 			cd.add(cdObj);
